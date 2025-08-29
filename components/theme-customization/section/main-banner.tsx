@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { FC } from "react";
-
 import { GridTileImage } from "@/components/grid/tile";
 import { TranslationsTypes } from "@/lib/bagisto/types";
 import { NOT_IMAGE } from "@/lib/constants";
@@ -15,7 +14,9 @@ const MainBanner: FC<{
     <section className="mt-7 grid gap-7 overflow-hidden">
       {data?.flatMap(({ options }) => {
         const { images } = options;
-        const firstImage = images?.[0];
+        if (!Array.isArray(images) || images.length === 0) return [];
+
+        const firstImage = images[0];
 
         return (
           <div key={firstImage?.imageUrl}>

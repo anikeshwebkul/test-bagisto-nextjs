@@ -60,7 +60,6 @@ export async function createCheckoutAddress(prev: any, formData: FormData) {
 
 export async function proccedCheckoutAddress(formData: any) {
   const result = await addCheckoutAddress({ ...formData });
-  // console.log(result?.cart);
   if (isObject(result?.cart)) {
     return {
       succsess: true,

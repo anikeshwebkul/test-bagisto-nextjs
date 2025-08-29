@@ -4,7 +4,7 @@ const ONE_MINUTE = 1000 * 60;
 
 const options = {
   max: 100, // Max 100 items
-  ttl: ONE_MINUTE * 5, // 5 minutes TTL
+  ttl: ONE_MINUTE, // 1 minutes TTL
   allowStale: true,
 };
 

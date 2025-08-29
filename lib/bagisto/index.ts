@@ -1,8 +1,7 @@
 import { revalidateTag } from "next/cache";
 import { cookies, headers } from "next/headers";
-import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-
+import { NextRequest, NextResponse } from "next/server";
 import lruCache from "../lru";
 
 import {
@@ -94,13 +93,13 @@ const endpoint = `${domain}${BAGISTO_GRAPHQL_API_ENDPOINT}`;
 type ExtractVariables<T> = T extends { variables: object }
   ? T["variables"]
   : never;
+
 export async function bagistoFetch<T>({
-  cache = "force-cache",
+  cache = "force-cache", // Always fetch fresh data
   headers,
   query,
   tags,
   variables,
-  cartId = true,
 }: {
   cache?: RequestCache;
   headers?: HeadersInit | any;
@@ -116,25 +115,30 @@ export async function bagistoFetch<T>({
     const bagistoCartId = cookieStore.get(BAGISTO_SESSION)?.value;
     const accessToken = sessions?.user?.accessToken;
 
-    if (isObject(headers)) {
-      headers["Authorization"] = `Bearer ${accessToken}`;
-    }
-
     const result = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "x-locale": "en",
+        "x-currency": "USD",
         Cookie: `${bagistoCartId ? `${BAGISTO_SESSION}=${bagistoCartId}` : ""}`,
-        Authorization: `Bearer ${accessToken}`,
+        ...(accessToken && {
+          Authorization: `Bearer ${accessToken}`,
+        }),
+        ...(bagistoCartId && {
+          Cookie: `${BAGISTO_SESSION}=${bagistoCartId}`,
+        }),
         ...headers,
       },
-
       body: JSON.stringify({
         ...(query && { query }),
         ...(variables && { variables }),
       }),
-      cache,
-      ...(tags && { next: { tags }, revalidate: 60 }),
+      cache: cache,
+      next: {
+        revalidate: cache === "no-store" ? 0 : 60,
+        ...(tags && { tags }),
+      },
     });
 
     const body = await result.json();
@@ -531,36 +535,18 @@ export async function getCollection(
   return res.body.data.allProducts.data;
 }
 
-export async function getCollectionHomePage(): Promise<
-  ThemeCustomizationTypes[]
-> {
-  const cached = lruCache.get(CACHE_KEY.homeTheme);
-  if (cached) {
-    // Trigger background refresh if stale
-    if (!lruCache.has(CACHE_KEY.homeTheme)) {
-      bagistoFetch<BagistoCollectionHomeOperation>({
-        query: getHomeCustomizationQuery,
-        tags: [TAGS.themeCustomize],
-      }).then((res) => {
-        if (isArray(res.body.data?.themeCustomization)) {
-          lruCache.set(CACHE_KEY.homeTheme, res.body.data.themeCustomization);
-        }
-      });
-    }
-    return cached;
-  }
-
-  // If no cache at all → fetch fresh
+export async function getCollectionHomePage(
+  handle: string
+): Promise<ThemeCustomizationTypes[]> {
   const res = await bagistoFetch<BagistoCollectionHomeOperation>({
     query: getHomeCustomizationQuery,
-    tags: [TAGS.themeCustomize],
+    tags: [handle, TAGS.themeCustomize],
   });
 
   if (!isArray(res.body.data?.themeCustomization)) {
     return [];
   }
 
-  lruCache.set(CACHE_KEY.homeTheme, res.body.data.themeCustomization);
   return res.body.data.themeCustomization;
 }
 
@@ -693,7 +679,6 @@ export async function getCollectionHomeProducts({
   tag: string;
 }): Promise<Product[]> {
   const cachedData = lruCache.get(tag);
-
   if (cachedData) return cachedData;
   try {
     const res = await bagistoFetch<BagistoCollectionProductsOperation>({
@@ -702,14 +687,22 @@ export async function getCollectionHomeProducts({
       variables: { input: filters },
     });
 
-    const BannerProduct = reshapeProducts(res.body.data.allProducts.data);
-
-    lruCache.set(tag, BannerProduct);
-    return BannerProduct;
+    // Only cache if products exist and no errors
+    if (
+      res.body &&
+      res.body.data &&
+      res.body.data.allProducts &&
+      Array.isArray(res.body.data.allProducts.data)
+    ) {
+      const BannerProduct = reshapeProducts(res.body.data.allProducts.data);
+      lruCache.set(tag, BannerProduct);
+      return BannerProduct;
+    }
+    // Do not cache if error or no products
+    return [];
   } catch (error) {
     console.error("Error fetching collection home products: line 630", error);
   }
-
   return [];
 }
 
@@ -817,9 +810,9 @@ export async function getThemeCustomization(): Promise<{
   footer_links: ThemeCustomizationTypes[];
   services_content: ThemeCustomizationTypes[];
 }> {
-  const cachedData = lruCache.get(CACHE_KEY.footerLink);
+  // const cachedData = lruCache.get(CACHE_KEY.footerLink);
 
-  if (cachedData) return cachedData;
+  // if (cachedData) return cachedData;
 
   try {
     const res = await bagistoFetch<BagistoCollectionHomeOperation>({
@@ -959,4 +952,43 @@ export async function getShippingMethod(): Promise<
   }
 
   return res.body.data.shippingMethods;
+}
+
+// This is called from `app/api/revalidate.ts` so providers can control revalidation logic.
+export async function revalidate(req: NextRequest): Promise<NextResponse> {
+  // We always need to respond with a 200 status code to Bagisto,
+  // otherwise it will continue to retry the request.
+  const collectionWebhooks = [
+    "collections/create",
+    "collections/delete",
+    "collections/update",
+  ];
+  const productWebhooks = [
+    "products/create",
+    "products/delete",
+    "products/update",
+  ];
+  const topic = (await headers()).get("x-bagisto-topic") || "unknown";
+  const secret = req.nextUrl.searchParams.get("secret");
+  const isCollectionUpdate = collectionWebhooks.includes(topic);
+  const isProductUpdate = productWebhooks.includes(topic);
+
+  if (!secret || secret !== process.env.BAGISTO_REVALIDATION_SECRET) {
+    return NextResponse.json({ status: 200 });
+  }
+
+  if (!isCollectionUpdate && !isProductUpdate) {
+    // We don't need to revalidate anything for any other topics.
+    return NextResponse.json({ status: 200 });
+  }
+
+  if (isCollectionUpdate) {
+    revalidateTag(TAGS.collections);
+  }
+
+  if (isProductUpdate) {
+    revalidateTag(TAGS.products);
+  }
+
+  return NextResponse.json({ status: 200, revalidated: true, now: Date.now() });
 }
