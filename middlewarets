@@ -13,14 +13,23 @@ export const config = {
 };
 
 export default withAuth(
-  async function middleware(req) {
+  async function middleware(req, res) {
     const pathName = req.nextUrl.pathname;
     const url = req.nextUrl.clone();
     const token = req.nextauth.token;
+    if (pathName === "/") {
+      const response = NextResponse.next();
+      response.headers.set(
+        "Cache-Control",
+        "s-maxage=60, stale-while-revalidate=300"
+      );
+    }
+
     if (token && checkAuthPages(pathName)) {
       url.pathname = "/";
       return NextResponse.redirect(url);
     }
+
     return NextResponse.next();
   },
   {

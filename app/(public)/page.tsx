@@ -14,6 +14,5 @@ export const metadata = {
 
 export default async function HomePage() {
   const themeCustomization = await getCollectionHomePage("homepage-handle");
-
   return <ThemeCustomization themeCustomization={themeCustomization} />;
 }
