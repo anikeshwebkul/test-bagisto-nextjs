@@ -1,24 +1,12 @@
-import dynamic from "next/dynamic";
 import { FC } from "react";
 
-import { ThemeSkeleton } from "./product-carousel/crausel-skeleton";
 import MainBanner from "./section/main-banner";
 
 import { ThemeCustomizationTypes } from "@/lib/bagisto/types";
-import { ThreeItemGridSkeleton } from "@/components/grid/three-items-skeleton";
+import ThreeItemGrid from "../grid/three-items";
+import ProductCarousel from "./product-carousel";
+import CategoryCarousel from "./category-carousel";
 
-const ProductCarousel = dynamic(() => import("./product-carousel"), {
-  ssr: true,
-  loading: () => <ThemeSkeleton />,
-});
-const CategoryCarousel = dynamic(() => import("./category-carousel"), {
-  ssr: true,
-  loading: () => <ThemeSkeleton />,
-});
-const ThreeItemGrid = dynamic(() => import("@/components/grid/three-items"), {
-  ssr: true,
-  loading: () => <ThreeItemGridSkeleton />,
-});
 const ThemeCustomization: FC<{
   themeCustomization: Array<ThemeCustomizationTypes>;
 }> = async ({ themeCustomization = [] }) => {
@@ -37,23 +25,23 @@ const ThemeCustomization: FC<{
     switch (type) {
       case "image_carousel":
         return <MainBanner key={key} data={translations} />;
-      case "product_carousel":
-        if (parseInt(sortOrder) === 4) {
-          return <ThreeItemGrid key={key} data={translations} name={name} />;
-        } else {
-          return (
-            <ProductCarousel
-              key={key}
-              data={translations}
-              name={name}
-              sortOrder={sortOrder}
-            />
-          );
-        }
-      case "category_carousel":
-        return (
-          <CategoryCarousel key={key} categoryData={translations} name={name} />
-        );
+      // case "product_carousel":
+      //   if (parseInt(sortOrder) === 4) {
+      //     return <ThreeItemGrid key={key} data={translations} name={name} />;
+      //   } else {
+      //     return (
+      //       <ProductCarousel
+      //         key={key}
+      //         data={translations}
+      //         name={name}
+      //         sortOrder={sortOrder}
+      //       />
+      //     );
+      //   }
+      // case "category_carousel":
+      //   return (
+      //     <CategoryCarousel key={key} categoryData={translations} name={name} />
+      //   );
 
       default:
         return null;

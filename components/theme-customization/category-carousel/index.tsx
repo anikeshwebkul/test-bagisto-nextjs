@@ -1,7 +1,4 @@
-import Link from "next/link";
 import { FC } from "react";
-import { GridTileImage } from "@/components/grid/tile";
-import { NOT_IMAGE } from "@/lib/constants";
 import { getCollectionMenus } from "@/lib/bagisto";
 import { FilterDataTypes } from "@/lib/bagisto/types";
 import { isArray, isObject } from "@/lib/type-guards";
