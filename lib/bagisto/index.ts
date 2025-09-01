@@ -85,6 +85,7 @@ import {
 import { authOptions } from "@/auth";
 import { CustomerRegister } from "./mutations/customer/customer-register";
 import { RegisterInputs } from "@/components/customer/login/registration-form";
+import { getProductsUrlQuery } from "./queries/product/product-urls";
 
 const domain = process.env.BAGISTO_STORE_DOMAIN || "";
 
@@ -736,6 +737,29 @@ export async function getHomeCategories(): Promise<any[]> {
   ];
 
   return collections;
+}
+
+export async function getAllProductUrls(): Promise<Product[]> {
+  const input = [
+    { key: "sort", value: "name-desc" },
+    { key: "page", value: "1" },
+    { key: "limit", value: "48" },
+  ];
+
+  const res = await fetch(`${process.env.BAGISTO_STORE_DOMAIN}/graphql`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query: getProductsUrlQuery,
+      variables: {
+        input,
+      },
+    }),
+    cache: "no-store",
+  });
+
+  const body = await res.json();
+  return body?.data?.allProducts?.data;
 }
 
 export async function getMenu(handle: string): Promise<Menu[]> {

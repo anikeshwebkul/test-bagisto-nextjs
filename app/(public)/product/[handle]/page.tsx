@@ -10,7 +10,7 @@ import {
   RelatedProductSkeleton,
 } from "@/components/product/place-order";
 import { ProductDescription } from "@/components/product/product-description";
-import { getCollectionProducts } from "@/lib/bagisto";
+import { getAllProductUrls, getCollectionProducts } from "@/lib/bagisto";
 import {
   BASE_SCHEMA_URL,
   NOT_IMAGE,
@@ -21,6 +21,14 @@ import { isArray } from "@/lib/type-guards";
 import { ProductCard } from "@/components/product-card";
 import Grid from "@/components/grid";
 
+export async function generateStaticParams() {
+  const prooducts = await getAllProductUrls();
+  const paths = prooducts.map((post) => ({
+    handle: post.urlKey,
+  }));
+
+  return paths;
+}
 export async function generateMetadata({
   params,
   searchParams,
