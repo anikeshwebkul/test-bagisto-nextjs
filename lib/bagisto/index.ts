@@ -101,6 +101,7 @@ export async function bagistoFetch<T>({
   query,
   tags,
   variables,
+  isCookies = true,
 }: {
   cache?: RequestCache;
   headers?: HeadersInit | any;
@@ -108,12 +109,17 @@ export async function bagistoFetch<T>({
   tags?: string[];
   variables?: ExtractVariables<T>;
   cartId?: boolean;
+  isCookies?: boolean;
 }): Promise<{ status: number; body: T } | never> {
   try {
-    const cookieStore = await cookies();
+    let bagistoCartId = "";
+    if (isCookies) {
+      const cookieStore = await cookies();
+      bagistoCartId = cookieStore.get(BAGISTO_SESSION)?.value ?? "";
+    }
+
     const sessions = await getServerSession(authOptions);
 
-    const bagistoCartId = cookieStore.get(BAGISTO_SESSION)?.value;
     const accessToken = sessions?.user?.accessToken;
 
     const result = await fetch(endpoint, {
@@ -122,7 +128,6 @@ export async function bagistoFetch<T>({
         "Content-Type": "application/json",
         "x-locale": "en",
         "x-currency": "USD",
-        Cookie: `${bagistoCartId ? `${BAGISTO_SESSION}=${bagistoCartId}` : ""}`,
         ...(accessToken && {
           Authorization: `Bearer ${accessToken}`,
         }),
@@ -169,6 +174,53 @@ export async function bagistoFetch<T>({
   }
 }
 
+export async function bagistoFetchNoSession<T>({
+  query,
+  tags,
+  variables,
+  headers,
+  cache = "force-cache",
+}: {
+  query: string;
+  tags?: string[];
+  variables?: ExtractVariables<T>;
+  headers?: HeadersInit | any;
+  cache?: RequestCache;
+}): Promise<{ status: number; body: T } | never> {
+  try {
+    const result = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-locale": "en",
+        "x-currency": "USD",
+        ...headers,
+      },
+      body: JSON.stringify({
+        ...(query && { query }),
+        ...(variables && { variables }),
+      }),
+      cache,
+      next: {
+        revalidate: cache === "no-store" ? 0 : 60,
+        ...(tags && { tags }),
+      },
+    });
+
+    const body = await result.json();
+
+    if (body.errors) {
+      throw body.errors[0];
+    }
+
+    return {
+      status: result.status,
+      body,
+    };
+  } catch (e) {
+    throw { error: e, query };
+  }
+}
 const removeEdgesAndNodes = (array: Array<any>) => {
   return array?.map((edge) => edge);
 };
@@ -539,11 +591,10 @@ export async function getCollection(
 export async function getCollectionHomePage(
   handle: string
 ): Promise<ThemeCustomizationTypes[]> {
-  const res = await bagistoFetch<BagistoCollectionHomeOperation>({
+  const res: any = await bagistoFetchNoSession<BagistoCollectionHomeOperation>({
     query: getHomeCustomizationQuery,
     tags: [handle, TAGS.themeCustomize],
   });
-
   if (!isArray(res.body.data?.themeCustomization)) {
     return [];
   }
@@ -567,11 +618,12 @@ export async function getCollectionMenus({
   try {
     const input = { input: inputs, getCategoryTree: getCategoryTree };
 
-    const res = await bagistoFetch<BagistoCollectionHomeCategoryCarousel>({
-      query: getHomeCategoriesQuery,
-      tags: [TAGS.collections, TAGS.products],
-      variables: input,
-    });
+    const res =
+      await bagistoFetchNoSession<BagistoCollectionHomeCategoryCarousel>({
+        query: getHomeCategoriesQuery,
+        tags: [TAGS.collections, TAGS.products],
+        variables: input,
+      });
 
     lruCache.set(tag, res.body.data.homeCategories);
 
@@ -632,6 +684,35 @@ export async function getCollectionProducts({
   return reshapeProducts(res.body.data.allProducts.data);
 }
 
+export async function getAllProductUrls(): Promise<Product[]> {
+  const input = [
+    { key: "sort", value: "name-desc" },
+    { key: "page", value: "1" },
+    { key: "limit", value: "48" },
+  ];
+  // const res = await bagistoFetchNoSession<BagistoCollectionProductsOperation>({
+  //   query: getProductsUrlQuery,
+  //   tags: [TAGS.collections, TAGS.products],
+  //   variables: {
+  //     input,
+  //   },
+  // });
+  const res = await fetch(`${process.env.BAGISTO_STORE_DOMAIN}/graphql`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query: getProductsUrlQuery,
+      variables: {
+        input,
+      },
+    }),
+    cache: "no-store",
+  });
+
+  const body = await res.json();
+  return body?.data?.allProducts?.data;
+}
+
 export async function getCollectionReviewProducts({
   collection,
   reverse,
@@ -682,11 +763,13 @@ export async function getCollectionHomeProducts({
   const cachedData = lruCache.get(tag);
   if (cachedData) return cachedData;
   try {
-    const res = await bagistoFetch<BagistoCollectionProductsOperation>({
-      query: getHomeProductQuery,
-      tags: [TAGS.collections, TAGS.products],
-      variables: { input: filters },
-    });
+    const res = await bagistoFetchNoSession<BagistoCollectionProductsOperation>(
+      {
+        query: getHomeProductQuery,
+        tags: [TAGS.collections, TAGS.products],
+        variables: { input: filters },
+      }
+    );
 
     // Only cache if products exist and no errors
     if (
@@ -737,29 +820,6 @@ export async function getHomeCategories(): Promise<any[]> {
   ];
 
   return collections;
-}
-
-export async function getAllProductUrls(): Promise<Product[]> {
-  const input = [
-    { key: "sort", value: "name-desc" },
-    { key: "page", value: "1" },
-    { key: "limit", value: "48" },
-  ];
-
-  const res = await fetch(`${process.env.BAGISTO_STORE_DOMAIN}/graphql`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      query: getProductsUrlQuery,
-      variables: {
-        input,
-      },
-    }),
-    cache: "no-store",
-  });
-
-  const body = await res.json();
-  return body?.data?.allProducts?.data;
 }
 
 export async function getMenu(handle: string): Promise<Menu[]> {

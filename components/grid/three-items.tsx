@@ -1,3 +1,4 @@
+export const revalidate = 60; // cached
 import type { FilterDataTypes } from "@/lib/bagisto/types";
 import { FC } from "react";
 

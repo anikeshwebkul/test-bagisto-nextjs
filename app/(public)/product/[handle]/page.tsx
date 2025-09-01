@@ -20,15 +20,18 @@ import {
 import { isArray } from "@/lib/type-guards";
 import { ProductCard } from "@/components/product-card";
 import Grid from "@/components/grid";
-
+export const revalidate = 60;
+// Return a list of `params` to populate the [slug] dynamic segment
 export async function generateStaticParams() {
   const prooducts = await getAllProductUrls();
-  const paths = prooducts.map((post) => ({
-    handle: post.urlKey,
-  }));
 
-  return paths;
+  return prooducts.map((post) => ({
+    handle: `${post.slug}?type=${post.type}`,
+  }));
 }
+
+// Multiple versions of this page will be statically generated
+// using the `params` returned by `generateStaticParams`
 export async function generateMetadata({
   params,
   searchParams,
