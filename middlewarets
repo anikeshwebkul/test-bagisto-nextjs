@@ -1,5 +1,48 @@
+// import { withAuth } from "next-auth/middleware";
+// import { NextResponse } from "next/server";
+// const checkAuthPages = (pathName: string) => {
+//   return (
+//     pathName.endsWith("/login") ||
+//     pathName.endsWith("/forget-password") ||
+//     pathName.endsWith("/register")
+//   );
+// };
+
+// export const config = {
+//   matcher: ["/customer/:path*"],
+// };
+
+// export default withAuth(
+//   async function middleware(req, res) {
+//     const pathName = req.nextUrl.pathname;
+//     const url = req.nextUrl.clone();
+//     const token = req.nextauth.token;
+//     if (pathName === "/") {
+//       const response = NextResponse.next();
+//       response.headers.set(
+//         "Cache-Control",
+//         "s-maxage=60, stale-while-revalidate=300"
+//       );
+//     }
+
+//     if (token && checkAuthPages(pathName)) {
+//       url.pathname = "/";
+//       return NextResponse.redirect(url);
+//     }
+
+//     return NextResponse.next();
+//   },
+//   {
+//     callbacks: {
+//       authorized: async () => {
+//         return true;
+//       },
+//     },
+//   }
+// );
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+
 const checkAuthPages = (pathName: string) => {
   return (
     pathName.endsWith("/login") ||
@@ -9,22 +52,26 @@ const checkAuthPages = (pathName: string) => {
 };
 
 export const config = {
-  matcher: ["/customer/:path*"],
+  matcher: ["/customer/:path*", "/"], // include homepage
 };
 
 export default withAuth(
-  async function middleware(req, res) {
+  async function middleware(req) {
     const pathName = req.nextUrl.pathname;
     const url = req.nextUrl.clone();
     const token = req.nextauth.token;
+
+    // ✅ Homepage caching
     if (pathName === "/") {
       const response = NextResponse.next();
       response.headers.set(
         "Cache-Control",
         "s-maxage=60, stale-while-revalidate=300"
       );
+      return response; // <-- must return!
     }
 
+    // Redirect authenticated users away from auth pages
     if (token && checkAuthPages(pathName)) {
       url.pathname = "/";
       return NextResponse.redirect(url);
@@ -34,9 +81,7 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: async () => {
-        return true;
-      },
+      authorized: async () => true,
     },
   }
 );
