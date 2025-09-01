@@ -1,9 +1,8 @@
 "use client";
 import { FC } from "react";
-import { motion } from "framer-motion";
 import { ProductCard } from "@/components/product-card";
 import { BagistoProductInfo } from "@/lib/bagisto/types";
-import { NOT_IMAGE, variants } from "@/lib/constants";
+import { NOT_IMAGE } from "@/lib/constants";
 
 const Theme: FC<{
   products: BagistoProductInfo[];
@@ -35,21 +34,13 @@ const Theme: FC<{
             const currency = product?.priceHtml?.currencyCode;
 
             return (
-              <motion.div
-                initial="hidden"
+              <ProductCard
                 key={index}
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                variants={variants}
-              >
-                <ProductCard
-                  currency={currency}
-                  imageUrl={imageUrl}
-                  price={price}
-                  product={product}
-                />
-              </motion.div>
+                currency={currency}
+                imageUrl={imageUrl}
+                price={price}
+                product={product}
+              />
             );
           })}
         </ul>

@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import clsx from "clsx";
 import Link from "next/link";
 
@@ -17,12 +14,7 @@ export default function ThreeItemGridItem({
   priority?: boolean;
 }) {
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.5 }}
-      transition={{ duration: 0.8, delay: 0.2 }}
-      variants={variants}
+    <div
       className={
         size === "full"
           ? "md:col-span-4 md:row-span-2"
@@ -60,6 +52,6 @@ export default function ThreeItemGridItem({
           }
         />
       </Link>
-    </motion.div>
+    </div>
   );
 }

@@ -9,6 +9,14 @@ import { GridTileImage } from "@/components/grid/tile";
 import Prose from "@/components/prose";
 import { isArray } from "@/lib/type-guards";
 import { formatDate, getReviews } from "@/lib/utils";
+import {
+  ArrowLeftIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MoonIcon,
+  SunIcon,
+} from "@heroicons/react/24/outline";
 
 export type additionalDataTypes = {
   id: string;
@@ -29,22 +37,35 @@ export const ProductMoreDetails: FC<{
     <div className="my-7">
       <Accordion
         itemClasses={{
-          base: "py-0 w-full bg-black/[3%] dark:bg-gray-800 shadow-none text-white",
-          title: "font-normal text-medium  text-black dark:text-white",
-          trigger: "py-0 rounded-lg h-14 flex items-center",
+          base: "shadow-none cursor-pointer bg-neutral-100 dark:bg-neutral-800",
         }}
         selectionMode="multiple"
         showDivider={false}
         variant="splitted"
       >
-        <AccordionItem key="1" aria-label="Description" title="Description">
-          <Prose
-            className="mb-6 text-base font-normal text-black/60 dark:!text-white"
-            html={description}
-          />
+        <AccordionItem
+          key="1"
+          indicator={({ isOpen }) =>
+            isOpen ? (
+              <ChevronLeftIcon className="h-5 w-5 stroke-neutral-800 dark:stroke-white" />
+            ) : (
+              <ChevronRightIcon className="h-5 w-5 stroke-neutral-800 dark:stroke-white" />
+            )
+          }
+          aria-label="Description"
+          title="Description"
+        >
+          <Prose html={description} />
         </AccordionItem>
         <AccordionItem
           key="2"
+          indicator={({ isOpen }) =>
+            isOpen ? (
+              <ChevronLeftIcon className="h-5 w-5 stroke-neutral-800 dark:stroke-white" />
+            ) : (
+              <ChevronRightIcon className="h-5 w-5 stroke-neutral-800 dark:stroke-white" />
+            )
+          }
           aria-label="Additional Information"
           title="Additional Information"
         >
@@ -67,7 +88,18 @@ export const ProductMoreDetails: FC<{
             ))}
           </div>
         </AccordionItem>
-        <AccordionItem key="3" aria-label="Ratings" title="Ratings">
+        <AccordionItem
+          key="3"
+          indicator={({ isOpen }) =>
+            isOpen ? (
+              <ChevronLeftIcon className="h-5 w-5 stroke-neutral-800 dark:stroke-white" />
+            ) : (
+              <ChevronRightIcon className="h-5 w-5 stroke-neutral-800 dark:stroke-white" />
+            )
+          }
+          aria-label="Ratings"
+          title="Ratings"
+        >
           <ReviewDetail reviewDetails={reviews} totalReview={totalReview} />
         </AccordionItem>
       </Accordion>
@@ -154,7 +186,7 @@ const ReviewDetail: FC<Props> = ({ reviewDetails, totalReview }) => {
         {reviewDetails?.map(
           (
             { name, title, comment, createdAt, rating, images, customer },
-            index,
+            index
           ) => (
             <div key={index} className="flex flex-col gap-y-2">
               <h1 className="font-outfit text-xl font-medium text-black/[80%] dark:text-white">
@@ -196,7 +228,7 @@ const ReviewDetail: FC<Props> = ({ reviewDetails, totalReview }) => {
                 </div>
               )}
             </div>
-          ),
+          )
         )}
       </div>
     </div>

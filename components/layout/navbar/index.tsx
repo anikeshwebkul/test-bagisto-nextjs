@@ -21,8 +21,8 @@ export default async function Navbar() {
   return (
     <header className="sticky top-0 z-10">
       <nav className="relative flex flex-col items-center justify-between gap-4 bg-neutral-50 p-4 dark:bg-neutral-900 md:flex-row lg:px-6">
-        <div className="grid w-full grid-cols-[auto_1fr] items-center gap-0 xss:grid-cols-2 sm:gap-4 md:grid-cols-3">
-          <div className="flex w-full gap-2 xl:gap-6">
+        <div className="flex w-full items-center justify-between gap-0 sm:gap-4">
+          <div className="flex max-w-fit gap-2 xl:gap-6">
             <Suspense fallback={null}>
               <MobileMenu menu={menuData} />
             </Suspense>
@@ -37,7 +37,7 @@ export default async function Navbar() {
                 {menuData.slice(0, 3).map((item) => (
                   <li key={item?.id + item.title}>
                     <Link
-                      className="text-neutral-500 underline-offset-4 hover:text-black hover:underline dark:text-neutral-400 dark:hover:text-neutral-300"
+                      className="text-nowrap text-neutral-500 underline-offset-4 hover:text-black hover:underline dark:text-neutral-400 dark:hover:text-neutral-300"
                       href={`${item.path}`}
                       prefetch={true}
                     >
@@ -53,7 +53,7 @@ export default async function Navbar() {
               <Search search={false} />
             </Suspense>
           </div>
-          <div className="ml-auto flex max-w-fit gap-2 md:gap-4">
+          <div className="flex max-w-fit gap-2 md:gap-4">
             <MobileSearch />
             <Suspense fallback={<OpenCart />}>
               <div className="hidden lg:block">

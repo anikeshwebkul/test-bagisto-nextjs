@@ -1,7 +1,7 @@
 "use client";
 import clsx from "clsx";
 import Link from "next/link";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 
 import Grid from "./grid";
 import { GridTileImage } from "./grid/tile";

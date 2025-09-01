@@ -50,7 +50,7 @@ export default function Search({
 
   return (
     <form
-      className="w-max-[550px] relative w-full lg:w-80 xl:w-full"
+      className="w-max-[550px] relative w-full md:min-w-[386px] xl:min-w-[516px]"
       onSubmit={onSubmit}
     >
       {setSearch && (
