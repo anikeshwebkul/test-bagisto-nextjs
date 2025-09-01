@@ -64,11 +64,7 @@ export default withAuth(
     // ✅ Homepage caching
     if (pathName === "/") {
       const response = NextResponse.next();
-      response.headers.set(
-        "Cache-Control",
-        "s-maxage=60, stale-while-revalidate=300"
-      );
-      return response; // <-- must return!
+      return response;
     }
 
     // Redirect authenticated users away from auth pages
