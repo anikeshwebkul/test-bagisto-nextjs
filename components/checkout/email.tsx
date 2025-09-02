@@ -7,6 +7,7 @@ import { delay } from "@/lib/utils";
 import Link from "next/link";
 import InputText from "./cart/input";
 import { ProceedToCheckout } from "./cart/proceed-to-checkout";
+import { form } from "@heroui/theme";
 
 type EmailFormValues = { email: string };
 
@@ -25,8 +26,9 @@ const Email = ({
   isGuest: boolean;
 }) => {
   const email = userEmail ?? getLocalStorage(EMAIL);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  console.log(typeof email);
 
   const {
     register,
@@ -44,7 +46,25 @@ const Email = ({
 
   return (
     <>
-      {email !== "" && isOpen ? (
+      {email === "" || typeof email === "object" ? (
+        <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
+          <EmailForm
+            register={register}
+            errors={errors}
+            isSubmitting={isSubmitting}
+            isGuest={isGuest}
+          />
+        </form>
+      ) : isOpen ? (
+        <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
+          <EmailForm
+            register={register}
+            errors={errors}
+            isSubmitting={isSubmitting}
+            isGuest={isGuest}
+          />
+        </form>
+      ) : (
         // 📌 Show static email view
         <div className="mt-4 flex justify-between">
           <div className="flex">
@@ -55,22 +75,12 @@ const Email = ({
           </div>
 
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={() => setIsOpen(!isOpen)}
             className="cursor-pointer text-base font-normal text-black/[60%] underline dark:text-neutral-300"
           >
             Change
           </button>
         </div>
-      ) : (
-        // 📌 Show form
-        <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
-          <EmailForm
-            register={register}
-            errors={errors}
-            isSubmitting={isSubmitting}
-            isGuest={isGuest}
-          />
-        </form>
       )}
     </>
   );

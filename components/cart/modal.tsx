@@ -107,7 +107,9 @@ export default function CartModal() {
                                     className="h-full w-full object-cover"
                                     height={64}
                                     src={
-                                      item?.product.images?.at(0)?.url as any
+                                      item?.product.cacheBaseImage?.at(0)
+                                        ?.smallImageUrl ??
+                                      (item?.product.images?.at(0)?.url as any)
                                     }
                                     width={74}
                                     onError={(e) =>

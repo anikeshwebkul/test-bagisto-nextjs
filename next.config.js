@@ -20,6 +20,19 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  async headers() {
+    return [
+      {
+        source: "/",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=3600, stale-while-revalidate=8640",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

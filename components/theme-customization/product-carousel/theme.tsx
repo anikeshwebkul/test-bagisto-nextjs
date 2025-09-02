@@ -1,4 +1,3 @@
-"use client";
 import { FC } from "react";
 import { ProductCard } from "@/components/product-card";
 import { BagistoProductInfo } from "@/lib/bagisto/types";

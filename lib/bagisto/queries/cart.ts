@@ -83,7 +83,12 @@ export const getCartQuery = /* GraphQL */ `
             url
             productId
           }
-          shareURL
+          cacheBaseImage {
+            smallImageUrl
+            mediumImageUrl
+            largeImageUrl
+            originalImageUrl
+          }
         }
         formattedPrice {
           price

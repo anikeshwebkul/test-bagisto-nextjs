@@ -1,7 +1,7 @@
 import { getCollectionHomePage } from "@/lib/bagisto";
 import ThemeCustomization from "@/components/theme-customization";
 export const revalidate = 60;
-export const dynamic = "force-static";
+export const dynamic = "auto";
 export const metadata = {
   description:
     "High-performance ecommerce store built with Next.js, Vercel, and Bagisto.",

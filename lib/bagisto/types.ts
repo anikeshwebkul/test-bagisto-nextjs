@@ -185,6 +185,12 @@ export type CartItem = {
       sku: string;
       parentId: string;
     };
+    cacheBaseImage: {
+      smallImageUrl: string;
+      mediumImageUrl: string;
+      largeImageUrl: string;
+      originalImageUrl: string;
+    }[];
     attributeValues: {
       id: string;
       productId: string;
