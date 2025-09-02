@@ -37,7 +37,17 @@ export default function RootLayout({
       suppressHydrationWarning
       lang="en"
     >
-      <head />
+      <head>
+        <script
+          type="speculationrules"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              prerender: [{ source: "/product/*" }, { source: "/category/*" }],
+              prefetch: [{ source: "/search/*" }],
+            }),
+          }}
+        />
+      </head>
       <body
         className={clsx(
           "min-h-screen font-outfit text-foreground bg-background antialiased",

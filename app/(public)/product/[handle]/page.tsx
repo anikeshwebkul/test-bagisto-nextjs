@@ -20,7 +20,9 @@ import {
 import { isArray } from "@/lib/type-guards";
 import { ProductCard } from "@/components/product-card";
 import Grid from "@/components/grid";
-export const revalidate = 60;
+import HeroCarousel from "@/components/product/slider/hero-carousel";
+// export const revalidate = 60;
+// export const dynamic = "force-static";
 // Return a list of `params` to populate the [slug] dynamic segment
 export async function generateStaticParams() {
   const prooducts = await getAllProductUrls();
@@ -130,7 +132,7 @@ export default async function ProductPage({
         <div className="h-full w-full basis-auto">
           <Suspense fallback={<ProductDetailSkeleton />}>
             {isArray(data?.cacheGalleryImages) ? (
-              <Gallery
+              <HeroCarousel
                 images={
                   data?.cacheGalleryImages?.map((image) => ({
                     src: image?.originalImageUrl || "",

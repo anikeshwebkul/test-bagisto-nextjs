@@ -14,10 +14,15 @@ import { createUrl } from "@/lib/utils";
 export type ListItem = SortFilterItemTypes | PathFilterItem;
 export type PathFilterItem = { title: string; path: string };
 
-
 import React, { useState, useMemo, useTransition } from "react";
 
-function FilterItemList({ list, title }: { list: getFilterAttributeTypes; title: string }) {
+function FilterItemList({
+  list,
+  title,
+}: {
+  list: getFilterAttributeTypes;
+  title: string;
+}) {
   const currentParams = useSearchParams();
   const sort = currentParams.get(SORT) || "name-asc";
   const router = useRouter();
@@ -25,8 +30,12 @@ function FilterItemList({ list, title }: { list: getFilterAttributeTypes; title:
   const [isPending, startTransition] = useTransition();
 
   // Optimistic UI: state updates instantly
-  const initialSelected = useMemo(() => new Set(currentParams.get(list.code)?.split(",") ?? []), [list.code, currentParams]);
-  const [selectedFilters, setSelectedFilters] = useState<Set<string>>(initialSelected);
+  const initialSelected = useMemo(
+    () => new Set(currentParams.get(list.code)?.split(",") ?? []),
+    [list.code, currentParams]
+  );
+  const [selectedFilters, setSelectedFilters] =
+    useState<Set<string>>(initialSelected);
 
   // Memoize options for big lists
   const memoizedOptions = useMemo(() => list.options, [list.options]);
