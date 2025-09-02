@@ -593,7 +593,9 @@ export async function getCollectionHomePage(
 ): Promise<ThemeCustomizationTypes[]> {
   const res: any = await bagistoFetchNoSession<BagistoCollectionHomeOperation>({
     query: getHomeCustomizationQuery,
-    tags: [handle, TAGS.themeCustomize],
+    tags: [TAGS.themeCustomize, `homepage-${handle}`], // Add specific tag
+    cache: "force-cache", // Keep for SSG
+
   });
   if (!isArray(res.body.data?.themeCustomization)) {
     return [];
