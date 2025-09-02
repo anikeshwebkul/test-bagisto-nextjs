@@ -20,23 +20,6 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  async headers() {
-    return [
-      {
-        source: "/",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "s-maxage=60, stale-while-revalidate=300",
-          },
-          {
-            key: "x-vercel-cache",
-            value: "HIT",
-          },
-        ],
-      },
-    ];
-  },
 };
 
 module.exports = nextConfig;
