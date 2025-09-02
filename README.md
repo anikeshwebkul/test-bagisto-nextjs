@@ -1,42 +1,36 @@
-# Next.js Commerce Bagisto
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A Next.js 14 and App Router-ready ecommerce template featuring:
+## Getting Started
 
-- Next.js App Router
-- Optimized for SEO using Next.js's Metadata
-- React Server Components (RSCs) and Suspense
-- Server Actions for mutations
-- Edge Runtime
-- New fetching and caching paradigms
-- Dynamic OG images
-- Styling with Tailwind CSS
-- Checkout and payments with Bagisto
-- Automatic light/dark mode based on system settings
-
-<h3 id="v1-note"></h3>
-
-## Configuration
-
-### Setup Bagisto Store
-
-- For `BAGISTO_PROTOCOL`, `BAGISTO_STOREFRONT_ACCESS_TOKEN`, `BAGISTO_REVALIDATION_SECRET` and `BAGISTO_STORE_DOMAIN`, you need to install the [Bagisto](https://github.com/bagisto/bagisto).
-- Then, you need to install the [Bagisto Headless Extension](https://github.com/bagisto/headless-ecommerce) in the Bagisto.
-- Now you need to host the full application so that you have store endpoint and if you are in development mode then you can use Ngrok also.
-- After that you can proceed with setting up Next.js commerce.
-
-## Running locally
-
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js Commerce. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a `.env` file is all that is necessary.
-
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your Bagisto store.
-
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
+First, run the development server:
 
 ```bash
-pnpm install
+npm run dev
+# or
+yarn dev
+# or
 pnpm dev
+# or
+bun dev
 ```
 
-Your app should now be running on [localhost:3000](http://localhost:3000/).
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
