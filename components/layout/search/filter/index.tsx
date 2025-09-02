@@ -14,44 +14,46 @@ import { createUrl } from "@/lib/utils";
 export type ListItem = SortFilterItemTypes | PathFilterItem;
 export type PathFilterItem = { title: string; path: string };
 
-function FilterItemList({
-  list,
-  title,
-}: {
-  list: getFilterAttributeTypes;
-  title: string;
-}) {
+
+import React, { useState, useMemo, useTransition } from "react";
+
+function FilterItemList({ list, title }: { list: getFilterAttributeTypes; title: string }) {
   const currentParams = useSearchParams();
   const sort = currentParams.get(SORT) || "name-asc";
   const router = useRouter();
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
 
-  const currentFilterParams = currentParams.get(list.code)?.split(",") ?? [];
+  // Optimistic UI: state updates instantly
+  const initialSelected = useMemo(() => new Set(currentParams.get(list.code)?.split(",") ?? []), [list.code, currentParams]);
+  const [selectedFilters, setSelectedFilters] = useState<Set<string>>(initialSelected);
+
+  // Memoize options for big lists
+  const memoizedOptions = useMemo(() => list.options, [list.options]);
 
   const handleFilterChange = (selectedIds: Set<string>) => {
+    setSelectedFilters(selectedIds); // Optimistic update
     const code = list.code;
     const selected = Array.from(selectedIds);
-
     const newParams = new URLSearchParams(currentParams.toString());
-
     if (selected.length > 0) {
       newParams.set(code, selected.join(","));
     } else {
       newParams.delete(code);
     }
-
     if (sort) newParams.set(SORT, sort);
-
     const newUrl = createUrl(pathname, newParams);
-
-    router.replace(newUrl);
+    // Shallow routing, backgrounded with startTransition
+    startTransition(() => {
+      router.replace(newUrl, { scroll: false });
+    });
   };
 
   return (
     <div className="min-w-48 w-full">
       <Select
         isMultiline
-        items={list.options}
+        items={memoizedOptions}
         radius="md"
         size="md"
         labelPlacement="inside"
@@ -63,10 +65,11 @@ function FilterItemList({
             ))}
           </div>
         )}
-        selectedKeys={new Set(currentFilterParams)}
+        selectedKeys={selectedFilters}
         selectionMode="multiple"
         variant="flat"
         onSelectionChange={(keys) => handleFilterChange(keys as Set<string>)}
+        isLoading={isPending}
       >
         {(item) => (
           <SelectItem key={item.id} textValue={item.id}>
