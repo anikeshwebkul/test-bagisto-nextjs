@@ -96,7 +96,7 @@ type ExtractVariables<T> = T extends { variables: object }
   : never;
 
 export async function bagistoFetch<T>({
-  cache = "force-cache",
+  cache = "force-cache", // Always fetch fresh data
   headers,
   query,
   tags,
@@ -122,7 +122,7 @@ export async function bagistoFetch<T>({
 
     const accessToken = sessions?.user?.accessToken;
 
-    const fetchOptions: RequestInit = {
+    const result = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -140,19 +140,11 @@ export async function bagistoFetch<T>({
         ...(query && { query }),
         ...(variables && { variables }),
       }),
-    };
-
-    // Add Next.js options for ISR
-    if (tags) {
-      (fetchOptions as any).next = {
+      cache: cache,
+      next: {
         revalidate: cache === "no-store" ? 0 : 60,
-        tags,
-      };
-    }
-
-    const result = await fetch(endpoint, {
-      ...fetchOptions,
-      cache,
+        ...(tags && { tags }),
+      },
     });
 
     const body = await result.json();
@@ -196,7 +188,7 @@ export async function bagistoFetchNoSession<T>({
   cache?: RequestCache;
 }): Promise<{ status: number; body: T } | never> {
   try {
-    const fetchOptions: RequestInit = {
+    const result = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -208,19 +200,11 @@ export async function bagistoFetchNoSession<T>({
         ...(query && { query }),
         ...(variables && { variables }),
       }),
-    };
-
-    // Add Next.js options for ISR
-    if (cache !== "no-store" && tags) {
-      (fetchOptions as any).next = {
-        revalidate: 60,
-        tags,
-      };
-    }
-
-    const result = await fetch(endpoint, {
-      ...fetchOptions,
       cache,
+      next: {
+        revalidate: cache === "no-store" ? 0 : 60,
+        ...(tags && { tags }),
+      },
     });
 
     const body = await result.json();
@@ -609,8 +593,7 @@ export async function getCollectionHomePage(
 ): Promise<ThemeCustomizationTypes[]> {
   const res: any = await bagistoFetchNoSession<BagistoCollectionHomeOperation>({
     query: getHomeCustomizationQuery,
-    tags: [TAGS.themeCustomize, `homepage-${handle}`], // Add specific tag
-    cache: "force-cache", // Enable SSG with ISR
+    tags: [handle, TAGS.themeCustomize],
   });
   if (!isArray(res.body.data?.themeCustomization)) {
     return [];
