@@ -37,9 +37,16 @@ const SortOrder: FC<{
 
   return (
     <section className="flex w-full max-w-[15.625rem] flex-1 items-center gap-x-2.5 dark:text-white min-[1300px]:ml-auto min-[1300px]:[grid-column-start:-1]">
-      <p className="leading-0 text-nowrap min-[1300]:block hidden">{title}</p>
+      <p
+        id="sort-label"
+        className="leading-0 text-nowrap min-[1300]:block hidden"
+      >
+        {title}
+      </p>
       <Select
         defaultOpen={false}
+        aria-label={title}
+        aria-labelledby="sort-label"
         defaultSelectedKeys={[sort]}
         isMultiline={false}
         items={sortOrders}
@@ -56,11 +63,7 @@ const SortOrder: FC<{
         onSelectionChange={(e) => handleSortChange(e.currentKey as string)}
       >
         {(order) => (
-          <SelectItem
-            key={order.value}
-            // className="dark:bg-gray-800 dark:text-white"
-            textValue={order.value}
-          >
+          <SelectItem key={order.value} textValue={order.value}>
             {order.title}
           </SelectItem>
         )}

@@ -3,8 +3,6 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { GridTileImage } from "@/components/grid/tile";
 export default function HeroCarousel({

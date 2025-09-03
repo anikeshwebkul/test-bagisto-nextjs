@@ -17,7 +17,6 @@ import { addShippingAddressMutation } from "./mutations/shipping-address";
 import { addShippingMethodMutation } from "./mutations/shipping-method";
 import { UpdateAddressMutation } from "./mutations/update-address";
 import { getCartQuery } from "./queries/cart";
-import { getCartDetailQuery } from "./queries/cart-detail";
 import { getChannelQuery } from "./queries/channel";
 import { getCustomerAddressQuery } from "./queries/checkout";
 import {
@@ -524,21 +523,6 @@ export async function getCart(): Promise<Cart | undefined> {
   const res = await bagistoFetch<BagistoCartOperation>({
     query: getCartQuery,
     tags: [TAGS.cart],
-    cache: "no-store",
-  });
-
-  // Old carts becomes `null` when you checkout.
-  if (!res.body.data?.cartDetail) {
-    return undefined;
-  }
-
-  return reshapeCart(res.body.data.cartDetail);
-}
-
-export async function getCartDetails(): Promise<Cart | undefined> {
-  const res = await bagistoFetch<BagistoCartOperation>({
-    query: getCartDetailQuery,
-    tags: [TAGS.carDetail],
     cache: "no-store",
   });
 

@@ -82,9 +82,11 @@ export const addToCartMutation = /* GraphQL */ `
               formattedFinalPrice
               currencyCode
             }
-
             cacheGalleryImages {
               smallImageUrl
+              mediumImageUrl
+              largeImageUrl
+              originalImageUrl
             }
             images {
               id

@@ -64,6 +64,8 @@ function FilterItemList({
         isMultiline
         items={memoizedOptions}
         radius="md"
+        aria-label={title}
+        aria-labelledby={`${title}-sort-label`}
         size="md"
         labelPlacement="inside"
         placeholder={`Select a ${title}`}

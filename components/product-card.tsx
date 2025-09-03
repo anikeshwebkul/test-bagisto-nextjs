@@ -31,6 +31,8 @@ export function SubmitButton({
     <Link
       aria-disabled="true"
       aria-label="Link to product page"
+      rel="prefetch"
+      prefetch={true}
       className={clsx(buttonClasses, {
         "hover:opacity-90": true,
       })}

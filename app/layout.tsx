@@ -42,8 +42,26 @@ export default function RootLayout({
           type="speculationrules"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
-              prerender: [{ source: "/product/*" }, { source: "/category/*" }],
-              prefetch: [{ source: "/search/*" }],
+              prerender: [
+                {
+                  where: {
+                    and: [
+                      { href_matches: "/*" },
+                      { not: { href_matches: "/logout" } },
+                      { not: { href_matches: "/*\\?*(^|&)add-to-cart=*" } },
+                      { not: { selector_matches: ".no-prerender" } },
+                      { not: { selector_matches: "[rel~=nofollow]" } },
+                    ],
+                  },
+                },
+              ],
+              prefetch: [
+                {
+                  urls: ["next.html", "next2.html"],
+                  requires: ["anonymous-client-ip-when-cross-origin"],
+                  referrer_policy: "no-referrer",
+                },
+              ],
             }),
           }}
         />

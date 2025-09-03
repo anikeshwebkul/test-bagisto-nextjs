@@ -81,9 +81,11 @@ export const removeFromCartMutation = /* GraphQL */ `
               formattedFinalPrice
               currencyCode
             }
-
             cacheGalleryImages {
               smallImageUrl
+              mediumImageUrl
+              largeImageUrl
+              originalImageUrl
             }
             images {
               id
@@ -94,7 +96,6 @@ export const removeFromCartMutation = /* GraphQL */ `
             }
           }
         }
-
         formattedPrice {
           grandTotal
           baseGrandTotal
