@@ -4,6 +4,7 @@ import { GridTileImage } from "@/components/grid/tile";
 import { TranslationsTypes } from "@/lib/bagisto/types";
 import { NOT_IMAGE } from "@/lib/constants";
 import { isArray } from "@/lib/type-guards";
+import Image from "next/image";
 
 const MainBanner: FC<{
   data: TranslationsTypes[];
@@ -25,12 +26,13 @@ const MainBanner: FC<{
               href={firstImage?.link as string}
               target="_blank"
             >
-              <GridTileImage
+              <Image
                 src={firstImage?.imageUrl ?? NOT_IMAGE}
                 alt={firstImage?.image || "Images"}
                 fill
                 className="w-full overflow-hidden rounded-lg object-fill"
                 priority={true}
+                fetchPriority="high"
               />
             </Link>
           </div>

@@ -21,8 +21,6 @@ import { isArray } from "@/lib/type-guards";
 import { ProductCard } from "@/components/product-card";
 import Grid from "@/components/grid";
 import HeroCarousel from "@/components/product/slider/hero-carousel";
-// export const revalidate = 60;
-// export const dynamic = "force-static";
 // Return a list of `params` to populate the [slug] dynamic segment
 export async function generateStaticParams() {
   const prooducts = await getAllProductUrls();

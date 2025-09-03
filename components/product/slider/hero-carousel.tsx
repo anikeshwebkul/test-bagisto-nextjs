@@ -77,7 +77,7 @@ export default function HeroCarousel({
               <li key={image.src} className="min-w-32 relative aspect-square">
                 <button
                   aria-label="Enlarge product image"
-                  className="h-full w-full"
+                  className="h-full w-full cursor-pointer"
                   onClick={() => setCurrent(index)}
                 >
                   <GridTileImage

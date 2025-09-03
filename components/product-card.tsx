@@ -92,14 +92,14 @@ export const ProductCard: FC<{
     >
       <div className="group relative overflow-hidden rounded-lg">
         <Link href={`/product/${product.urlKey}?type=${product.type}`}>
-          <div className="group aspect-[353/283] h-auto truncate rounded-lg border border-solid border-gray-100">
+          <div className="group aspect-[353/283] h-auto truncate rounded-lg">
             <GridTileImage
               alt={product?.name || "Product image"}
               blurDataURL={NOT_IMAGE}
               className={`rounded-lg bg-neutral-100 object-cover transition duration-300 ease-in-out group-hover:scale-105`}
-              fetchPriority="high"
               placeholder="blur"
-              priority={true}
+              loading="lazy"
+              priority={false}
               fill
               src={imageUrl ?? NOT_IMAGE}
             />
