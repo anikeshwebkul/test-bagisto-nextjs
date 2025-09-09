@@ -1,6 +1,5 @@
 import { revalidateTag } from "next/cache";
 import { cookies, headers } from "next/headers";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import lruCache from "../lru";
 
@@ -66,7 +65,9 @@ import {
   ImageInfo,
   Menu,
   Page,
+  PaginatedProducts,
   Product,
+  ProductDetailsInfo,
   ShippingArrayDataType,
   SuperAttribute,
   ThemeCustomizationTypes,
@@ -80,8 +81,8 @@ import {
   CHECKOUT,
   HIDDEN_PRODUCT_TAG,
   TAGS,
+  TOKEN,
 } from "@/lib/constants";
-import { authOptions } from "@/auth";
 import { CustomerRegister } from "./mutations/customer/customer-register";
 import { RegisterInputs } from "@/components/customer/login/registration-form";
 import { getProductsUrlQuery } from "./queries/product/product-urls";
@@ -111,22 +112,21 @@ export async function bagistoFetch<T>({
   isCookies?: boolean;
 }): Promise<{ status: number; body: T } | never> {
   try {
+    const cookieStore = await cookies();
     let bagistoCartId = "";
+
     if (isCookies) {
-      const cookieStore = await cookies();
       bagistoCartId = cookieStore.get(BAGISTO_SESSION)?.value ?? "";
     }
 
-    const sessions = await getServerSession(authOptions);
-
-    const accessToken = sessions?.user?.accessToken;
+    const accessToken = cookieStore.get(TOKEN)?.value ?? "";
 
     const result = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-locale": "en",
-        "x-currency": "USD",
+        // "x-locale": "en",
+        // "x-currency": "USD",
         ...(accessToken && {
           Authorization: `Bearer ${accessToken}`,
         }),
@@ -559,7 +559,7 @@ export async function getCheckoutAddress() {
 
 export async function getCollection(
   handle: string
-): Promise<Product[] | undefined> {
+): Promise<ProductDetailsInfo[] | undefined> {
   const input = [{ key: "category_id", value: `${handle}` }];
   const res = await bagistoFetch<BagistoCollectionOperation>({
     query: getCollectionSeoQuery,
@@ -631,7 +631,7 @@ export async function getCollectionProducts({
   reverse?: boolean;
   sortKey?: string;
   page?: string;
-}): Promise<Product[]> {
+}): Promise<ProductDetailsInfo[]> {
   let input = [{ key: "limit", value: "100" }];
 
   if (collection && page != "product") {
@@ -652,6 +652,7 @@ export async function getCollectionProducts({
       ...input,
     ];
   }
+
   const res = await bagistoFetch<BagistoCollectionProductsOperation>({
     query: getCollectionProductQuery,
     tags: [TAGS.collections, TAGS.products],
@@ -674,13 +675,7 @@ export async function getAllProductUrls(): Promise<Product[]> {
     { key: "page", value: "1" },
     { key: "limit", value: "48" },
   ];
-  // const res = await bagistoFetchNoSession<BagistoCollectionProductsOperation>({
-  //   query: getProductsUrlQuery,
-  //   tags: [TAGS.collections, TAGS.products],
-  //   variables: {
-  //     input,
-  //   },
-  // });
+
   const res = await fetch(`${process.env.BAGISTO_STORE_DOMAIN}/graphql`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -743,7 +738,7 @@ export async function getCollectionHomeProducts({
 }: {
   filters: any;
   tag: string;
-}): Promise<Product[]> {
+}): Promise<ProductDetailsInfo[]> {
   const cachedData = lruCache.get(tag);
   if (cachedData) return cachedData;
   try {
@@ -852,22 +847,18 @@ export async function getMenu(handle: string): Promise<Menu[]> {
   });
 
   const response =
-    res.body?.data?.homeCategories?.map(
-      (item: {
-        name: string;
-        slug: string;
-        id: string;
-        description: string;
-      }) => ({
-        id: item.id,
-        title: item.name,
-        description: item.description,
-        path: `/search/${item.slug
-          .replace(domain, "")
-          .replace("/collections", "/search")
-          .replace("/pages", "/search")}`,
-      })
-    ) || [];
+    res.body?.data?.homeCategories?.map((item) => ({
+      id: item.id,
+      title: item.name,
+      description: item.description,
+      metaTitle: item.metaTitle,
+      metaDescription: item.metaDescription,
+      metaKeywords: item.metaKeywords,
+      path: `/search/${item.slug
+        .replace(domain, "")
+        .replace("/collections", "/search")
+        .replace("/pages", "/search")}`,
+    })) || [];
 
   lruCache.set(handle, response);
 
@@ -947,8 +938,8 @@ export async function getProducts({
   sortKey?: string;
   filters?: any;
   tag: string;
-}): Promise<Product[]> {
-  let input = [{ key: "limit", value: "10" }];
+}): Promise<PaginatedProducts> {
+  let input = [{ key: "limit", value: "12" }];
 
   if (sortKey) {
     input = [{ key: "sort", value: `${sortKey}` }, ...input];
@@ -974,7 +965,22 @@ export async function getProducts({
     },
   });
 
-  return reshapeProducts(res.body.data.allProducts.data);
+  if (!isArray(res.body.data.allProducts.data)) {
+    return {
+      paginatorInfo: {
+        count: 0,
+        currentPage: 1,
+        lastPage: 1,
+        total: 12,
+      },
+      products: [],
+    };
+  }
+
+  return {
+    paginatorInfo: res.body.data.allProducts?.paginatorInfo,
+    products: reshapeProducts(res.body.data.allProducts.data),
+  };
 }
 
 export async function getFilterAttributes({

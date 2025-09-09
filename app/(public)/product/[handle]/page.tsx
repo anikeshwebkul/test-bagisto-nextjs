@@ -1,10 +1,7 @@
 import type { RelatedProducts } from "@/lib/bagisto/types";
 import type { Metadata } from "next";
-
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-
-import { Gallery } from "@/components/product/gallery";
 import {
   ProductDetailSkeleton,
   RelatedProductSkeleton,
@@ -17,7 +14,7 @@ import {
   PRODUCT_OFFER_TYPE,
   PRODUCT_TYPE,
 } from "@/lib/constants";
-import { isArray } from "@/lib/type-guards";
+import { isArray, isObject } from "@/lib/type-guards";
 import { ProductCard } from "@/components/product-card";
 import Grid from "@/components/grid";
 import HeroCarousel from "@/components/product/slider/hero-carousel";
@@ -25,9 +22,11 @@ import HeroCarousel from "@/components/product/slider/hero-carousel";
 export async function generateStaticParams() {
   const prooducts = await getAllProductUrls();
 
-  return prooducts.map((post) => ({
-    handle: `${post.slug}?type=${post.type}`,
-  }));
+  return isObject(prooducts)
+    ? prooducts.map((post) => ({
+        handle: `${post.slug}?type=${post.type}`,
+      }))
+    : [];
 }
 
 // Multiple versions of this page will be statically generated
@@ -125,9 +124,8 @@ export default async function ProductPage({
         }}
         type="application/ld+json"
       />
-
-      <div className="flex flex-col rounded-lg py-7.5 lg:flex-row lg:gap-8">
-        <div className="h-full w-full basis-auto">
+      <div className="flex flex-col gap-y-4 rounded-lg pb-0 pt-4 sm:gap-y-6 md:py-7.5 lg:flex-row lg:gap-8">
+        <div className="h-full w-full max-w-[885px]">
           <Suspense fallback={<ProductDetailSkeleton />}>
             {isArray(data?.cacheGalleryImages) ? (
               <HeroCarousel
@@ -139,7 +137,7 @@ export default async function ProductPage({
                 }
               />
             ) : (
-              <Gallery
+              <HeroCarousel
                 images={[
                   {
                     src: NOT_IMAGE,
@@ -170,7 +168,7 @@ async function RelatedProducts({
   if (!relatedProduct.length) return null;
 
   return (
-    <div className="flex flex-col gap-y-10 py-20">
+    <div className="flex flex-col gap-y-10 py-8 sm:py-12 lg:py-20">
       <div className="flex flex-col gap-y-4 font-outfit">
         <h2 className="text-4xl font-semibold">Related Products</h2>
         <p className="dark:b-neutral-300 font-normal text-black/[60%] dark:text-neutral-300">
@@ -183,8 +181,16 @@ async function RelatedProducts({
           <ProductCard
             key={index}
             currency={item?.priceHtml?.currencyCode}
-            imageUrl={item?.images?.[0]?.url ?? NOT_IMAGE}
-            price={item?.priceHtml?.finalPrice}
+            imageUrl={
+              item?.cacheGalleryImages?.[0]?.originalImageUrl ??
+              item?.images?.[0]?.url ??
+              NOT_IMAGE
+            }
+            price={
+              item?.priceHtml?.finalPrice ||
+              item?.priceHtml?.regularPrice ||
+              "0"
+            }
             product={item}
           />
         ))}

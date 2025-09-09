@@ -1,11 +1,11 @@
 import { ProductCard } from "@/components/product-card";
-import { Product } from "@/lib/bagisto/types";
+import { ProductDetailsInfo } from "@/lib/bagisto/types";
 import { NOT_IMAGE } from "@/lib/constants";
 
 export default function ProductGridItems({
   products,
 }: {
-  products: Product[];
+  products: ProductDetailsInfo[];
 }) {
   return products.map((product, index) => {
     const imageUrl =

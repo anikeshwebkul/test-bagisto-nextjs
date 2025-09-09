@@ -3,7 +3,6 @@
 import { Select, SelectItem } from "@heroui/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FC } from "react";
-import { Chip } from "@heroui/chip";
 
 import { createUrl } from "@/lib/utils";
 import { SORT } from "@/lib/constants";
@@ -36,7 +35,7 @@ const SortOrder: FC<{
   };
 
   return (
-    <section className="flex w-full max-w-[15.625rem] flex-1 items-center gap-x-2.5 dark:text-white min-[1300px]:ml-auto min-[1300px]:[grid-column-start:-1]">
+    <section className="flex w-48 items-center gap-x-2.5 dark:text-white">
       <p
         id="sort-label"
         className="leading-0 text-nowrap min-[1300]:block hidden"
@@ -54,7 +53,7 @@ const SortOrder: FC<{
         renderValue={(items) => (
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 pt-1">
             {items.map((item) => (
-              <Chip key={item.key}>{item.data?.title}</Chip>
+              <p key={item.key}>{item.data?.title}</p>
             ))}
           </div>
         )}

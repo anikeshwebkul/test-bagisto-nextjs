@@ -7,6 +7,8 @@ import FilterListSkeleton, {
 import NotFound from "@/components/layout/search/not-found";
 import { getFilterAttributes, getProducts } from "@/lib/bagisto";
 import MobileFilter from "@/components/layout/search/filter/modile-filter";
+import { isArray } from "@/lib/type-guards";
+import Pagination from "@/components/elements/pagination";
 const ProductGridItems = dynamic(
   () => import("@/components/layout/product-grid-items"),
   {
@@ -44,7 +46,7 @@ export default async function SearchPage({
     value,
   }));
 
-  const products = await getProducts({
+  const data = await getProducts({
     sortKey,
     query: searchValue,
     filters,
@@ -54,10 +56,13 @@ export default async function SearchPage({
   const productAttributes = await getFilterAttributes({ categorySlug: "" });
   const sortOrders = productAttributes?.sortOrders;
   const filterAttributes = productAttributes?.filterAttributes;
+  const products = data?.products || [];
+  const paginatorInfo = data?.paginatorInfo;
+  const { total, currentPage } = paginatorInfo;
 
   return (
     <>
-      <div className="my-10 hidden flex-1 grid-cols-[repeat(auto-fit,minmax(180px,1fr))] items-center gap-4 md:grid xl:grid-cols-[repeat(auto-fit,minmax(180px,192px))]">
+      <div className="my-10 hidden gap-4 md:flex md:items-baseline md:justify-between">
         <Suspense fallback={<FilterListSkeleton />}>
           <FilterList filterAttributes={filterAttributes} />
         </Suspense>
@@ -74,7 +79,7 @@ export default async function SearchPage({
         </Suspense>
       </div>
 
-      {products.length === 0 && (
+      {!isArray(products) && (
         <NotFound
           msg={`${
             searchValue
@@ -83,10 +88,27 @@ export default async function SearchPage({
           } `}
         />
       )}
-      {products.length > 0 ? (
+      {isArray(products) ? (
         <Grid className="mb-4 grid-cols-1 400:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           <ProductGridItems products={products} />
         </Grid>
+      ) : null}
+
+      {isArray(products) ? (
+        <>
+          {total > 12 ? (
+            <nav
+              aria-label="Collection pagination"
+              className="mt-10 block items-center sm:flex"
+            >
+              <Pagination
+                itemsPerPage={12}
+                itemsTotal={total}
+                currentPage={currentPage ? currentPage - 1 : 0}
+              />
+            </nav>
+          ) : null}
+        </>
       ) : null}
     </>
   );

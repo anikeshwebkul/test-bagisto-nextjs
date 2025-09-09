@@ -46,7 +46,7 @@ export const BASE_URL = process.env.NEXTAUTH_URL;
 export const PAGE = "page";
 export const LIMIT = "limit";
 export const LOADING = "loading";
-export const QUERY = "query";
+export const QUERY = "q";
 export const SORT = "sort";
 
 /**

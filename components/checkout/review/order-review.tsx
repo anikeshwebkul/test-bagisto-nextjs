@@ -27,12 +27,12 @@ export default function OrderReview({
   };
 
   return (
-    <div className="my-5 flex-col">
-      <div className="relative my-4 rounded-lg border-[1px] border-neutral-200 px-3 dark:border-white/30">
+    <div className="mt-4 flex-col">
+      <div className="relative">
         {isObject(shippingAddress) && (
           <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
             <tbody>
-              <tr className="border-b border-neutral-200 dark:border-gray-700">
+              <tr className="">
                 <td className="py-4">Contact</td>
                 <th
                   className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
@@ -41,7 +41,7 @@ export default function OrderReview({
                   {shippingAddress?.email}
                 </th>
               </tr>
-              <tr className="border-b border-neutral-200 dark:border-gray-700">
+              <tr className="">
                 <td className="py-4">Billing to</td>
                 <th
                   className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
@@ -53,7 +53,7 @@ export default function OrderReview({
                   {billingAddress?.country}
                 </th>
               </tr>
-              <tr className="border-b border-neutral-200 dark:border-gray-700">
+              <tr className="">
                 <td className="py-4">Ship to</td>
                 <th
                   className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
@@ -65,7 +65,7 @@ export default function OrderReview({
                   {shippingAddress?.country}
                 </th>
               </tr>
-              <tr className="border-b border-neutral-200 dark:border-gray-700">
+              <tr className="">
                 <td className="py-4">Method</td>
                 <th
                   className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"

@@ -31,7 +31,7 @@ export default function HeroCarousel({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="group relative aspect-[1.2] h-full max-h-[738px] w-full max-w-[885px] overflow-hidden rounded-2xl"
+          className="group relative aspect-[1.2] h-full max-h-[738px] w-full overflow-hidden rounded-2xl"
         >
           <Image
             fill
@@ -69,12 +69,15 @@ export default function HeroCarousel({
         {/* Navigation Arrows */}
       </div>
       {images?.length > 1 ? (
-        <ul className="fade-in my-7 flex min-h-fit items-center justify-center gap-2 overflow-x-auto overflow-y-hidden py-1 lg:mb-0">
+        <ul className="fade-in my-3 flex min-h-fit items-center justify-center gap-2 overflow-x-auto overflow-y-hidden py-1 sm:my-7 lg:mb-0">
           {images.map((image, index: number) => {
             const isActive = index === current;
 
             return (
-              <li key={image.src} className="min-w-32 relative aspect-square">
+              <li
+                key={image.src}
+                className="sm:min-w-32 relative aspect-square w-32"
+              >
                 <button
                   aria-label="Enlarge product image"
                   className="h-full w-full cursor-pointer"

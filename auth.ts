@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-// import { cookies } from "next/headers";
+import { cookies } from "next/headers";
 
 import { bagistoFetch } from "@/lib/bagisto";
 import { CustomerLogin } from "@/lib/bagisto/mutations/customer-login";
@@ -42,9 +42,8 @@ export const authOptions: NextAuthOptions = {
             isObject(res?.body?.data?.customerLogin)
           ) {
             const customerInfo = res?.body?.data?.customerLogin;
-            // const CookieStore = await cookies();
-
-            // CookieStore.set(TOKEN, customerInfo?.accessToken);
+            const CookieStore = await cookies();
+            CookieStore.set(TOKEN, customerInfo?.accessToken);
 
             return {
               firstname: customerInfo.customer.firstName,

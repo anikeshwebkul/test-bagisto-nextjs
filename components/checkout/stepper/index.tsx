@@ -35,7 +35,7 @@ interface CheckOutProps {
   currentStep: string;
   userEmail?: string;
   selectedPayment?: selectedPaymentMethodType;
-  selectedShippingRate: { method: string; methodDescription?: string };
+  selectedShippingRate?: { method: string; methodDescription?: string };
 }
 
 export default function Stepper({
@@ -73,6 +73,7 @@ export default function Stepper({
           <ShippingAddress
             billingAddress={billingAddress}
             countries={countries}
+            userEmail={userEmail}
             shippingAddress={shippingAddress}
           />
         ),
@@ -92,7 +93,7 @@ export default function Stepper({
         component: (
           <Payment
             selectedPayment={selectedPayment}
-            selectedShippingRate={selectedShippingRate?.method}
+            selectedShippingRate={selectedShippingRate}
           />
         ),
       },
@@ -152,15 +153,6 @@ export default function Stepper({
               {step.title}
             </span>
           </div>
-
-          {/* {isCompleted && (
-            <Link
-              className="text-sm font-normal text-black/[60%] underline dark:text-neutral-300"
-              href={step.href}
-            >
-              Change
-            </Link>
-          )} */}
         </div>
 
         {isCompleted && <section>{step.component}</section>}
@@ -170,7 +162,7 @@ export default function Stepper({
 
   return (
     <div className="mx-auto w-full">
-      <header className="py-6">
+      <header className="pb-6 sm:py-6">
         <Link
           aria-label={SITE_NAME}
           className="flex items-center gap-2 text-black dark:text-white md:pt-1"
@@ -180,8 +172,8 @@ export default function Stepper({
         </Link>
       </header>
 
-      <div className="lg:h-[calc(100dvh-124px)] lg:overflow-hidden">
-        <div className="flex h-full flex-col gap-y-8 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-500 dark:scrollbar-thumb-neutral-300 lg:overflow-y-auto">
+      <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-500 dark:scrollbar-thumb-neutral-300 lg:h-[calc(100dvh-124px)] lg:overflow-hidden lg:overflow-y-auto">
+        <div className="flex h-full flex-col gap-y-8 px-3">
           {steps.map((step) => (
             <StepItem key={step.id} step={step} />
           ))}

@@ -1,15 +1,15 @@
 import clsx from "clsx";
 import Link from "next/link";
 
-import { NOT_IMAGE, variants } from "@/lib/constants";
+import { NOT_IMAGE } from "@/lib/constants";
 import { GridTileImage } from "./tile";
-import { Product } from "@/lib/bagisto/types";
+import { ProductDetailsInfo } from "@/lib/bagisto/types";
 export default function ThreeItemGridItem({
   item,
   size,
   priority,
 }: {
-  item: Product;
+  item: ProductDetailsInfo;
   size: "full" | "half";
   priority?: boolean;
 }) {

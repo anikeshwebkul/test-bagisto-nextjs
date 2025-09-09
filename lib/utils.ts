@@ -153,7 +153,8 @@ export function formatDate(dateStr: string): string {
 
 export const isCheckout = (
   items: Array<CartItem>,
-  isGuest: boolean
+  isGuest: boolean,
+  email: string
 ): string => {
   if (isGuest) {
     if (isArray(items)) {
@@ -163,13 +164,17 @@ export const isCheckout = (
           product?.guestCheckout === false || product.guestCheckout === null
       );
 
-      return hasRestrictedProduct ? "/customer/login" : "/checkout";
+      return hasRestrictedProduct
+        ? "/customer/login"
+        : email === "" || typeof email === "object"
+          ? "/checkout"
+          : "/checkout?step=address";
     } else {
       return "/";
     }
   }
 
-  return "/checkout";
+  return "/checkout?step=address";
 };
 
 export const delay = (ms: number) => {
@@ -188,4 +193,11 @@ export function generateCookieValue(length: number) {
   }
 
   return cookieValue;
+}
+
+export function getInitials(name?: string) {
+  if (!name) return "";
+  const words = name.trim().split(" ");
+  const initials = words.map((w) => w[0]).join(""); // JDS
+  return initials.substring(0, 2).toUpperCase(); // JD
 }

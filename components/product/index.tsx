@@ -7,13 +7,14 @@ export interface RatingTypes {
   reviewCount?: number;
   size?: string;
   className?: string;
+  totalReview?: number;
 }
 const Rating = ({
   length,
   star = 4,
-  reviewCount,
   size = "size-4",
   className,
+  totalReview,
 }: RatingTypes) => {
   if (!star) {
     return null;
@@ -33,8 +34,8 @@ const Rating = ({
           />
         ))}
       </div>
-      {reviewCount ? (
-        <span className="h-fit font-outfit text-sm font-light">{`(${reviewCount} Reviews)`}</span>
+      {totalReview ? (
+        <span className="h-fit font-outfit text-sm font-light">{`(${totalReview} Reviews)`}</span>
       ) : null}
     </div>
   );

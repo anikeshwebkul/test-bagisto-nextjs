@@ -78,12 +78,11 @@ const GuestAddAdressForm: FC<{
     };
     saveCheckoutAddress(inputs);
   };
-  const selectedCountryCode = watch("billing.country");
+  // const selectedCountryCode = watch("billing.country");
 
-  const selectedCountry = countries?.find(
-    (c: CountryArrayDataType) => c.code === selectedCountryCode
-  );
-  console.log(shippingAddress, billingAddress);
+  // const selectedCountry = countries?.find(
+  //   (c: CountryArrayDataType) => c.code === selectedCountryCode
+  // );
 
   return isObject(shippingAddress) && isObject(billingAddress) ? (
     isOpen ? (

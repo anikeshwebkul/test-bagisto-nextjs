@@ -12,11 +12,9 @@ export async function GET() {
       tags: [TAGS.address],
       cache: "no-store",
     });
+
     if (!isObject(response?.body?.data?.checkoutAddresses)) {
-      return Response.json(
-        { checkoutAddresses: { customer: null } },
-        { status: 200 }
-      );
+      return Response.json({ checkoutAddresses: null }, { status: 200 });
     }
 
     return Response.json(response?.body?.data, { status: 200 });

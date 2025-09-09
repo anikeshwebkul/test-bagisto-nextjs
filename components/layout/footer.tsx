@@ -10,6 +10,9 @@ import Subscribe from "./subscribe";
 
 import { isObject } from "@/lib/type-guards";
 import { getThemeCustomization } from "@/lib/bagisto";
+import FaceBookIcon from "../icons/social-icon/facebook-ixon";
+import InstaGramIcon from "../icons/social-icon/instagram-icon";
+import TwitterIcon from "../icons/social-icon/twitter-icon";
 const ServiceContent = dynamic(
   () => import("@/components/theme-customization/section/service-content"),
   {
@@ -21,7 +24,7 @@ const { COMPANY_NAME, SITE_NAME } = process.env;
 
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
-  const copyrightDate = 2023 + (currentYear > 2023 ? `-${currentYear}` : "");
+  const copyrightDate = 2010 + (currentYear > 2010 ? `-${currentYear}` : "");
   const skeleton =
     "w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700";
   const menu = await getThemeCustomization();
@@ -30,7 +33,7 @@ export default async function Footer() {
 
   return (
     <>
-      <div className="mx-auto my-12 w-full sm:my-30 md:my-20 md:max-w-4xl">
+      <div className="mx-auto my-8 w-full sm:my-12 md:my-20 md:max-w-4xl">
         {isObject(services) && (
           <ServiceContent
             name={services?.name}
@@ -38,14 +41,25 @@ export default async function Footer() {
           />
         )}
       </div>
-      <footer className="border-t border-neutral-200 text-sm text-neutral-500 dark:border-neutral-500 dark:text-neutral-400">
-        <div className="mx-auto flex w-full max-w-screen-2xl flex-col justify-between gap-6 gap-y-6 px-6 py-12 pb-4 text-sm dark:border-neutral-700 md:flex-row md:gap-12 md:gap-y-20 md:px-4 min-[1320px]:px-0">
-          <div className="">
+      <footer className="border-t border-neutral-200 text-sm text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
+        <div className="mx-auto flex w-full max-w-screen-2xl flex-col justify-between gap-6 gap-y-6 px-6 py-12 text-sm dark:border-neutral-700 min-[880px]:flex-row min-[880px]:gap-12 min-[880px]:gap-y-20 min-[880px]:px-4">
+          <div className="flex flex-col gap-[14px]">
             <Link className="flex items-center gap-2 md:pt-1" href="/">
               <LogoIcon />
             </Link>
+            <div className="flex gap-[14px]">
+              <Link href="#" className="cursor-pointer">
+                <FaceBookIcon />
+              </Link>
+              <Link href="#" className="cursor-pointer">
+                <InstaGramIcon />
+              </Link>
+              <Link href="#" className="cursor-pointer">
+                <TwitterIcon />
+              </Link>
+            </div>
           </div>
-          <div className="flex flex-col gap-x-12 md:flex-row">
+          <div className="flex flex-col gap-x-8 md:flex-row lg:gap-x-[50px]">
             <Suspense
               fallback={
                 <div className="flex h-[188px] w-[200px] flex-col gap-2">

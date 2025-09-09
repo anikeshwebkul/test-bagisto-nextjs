@@ -23,7 +23,7 @@ export const Toast = ({
         color={toast?.type}
         isVisible={Boolean(toast.id)}
         title={toast.message}
-        variant="flat"
+        variant="faded"
         onClose={() => onRemove(toast.id)}
       />
     </div>

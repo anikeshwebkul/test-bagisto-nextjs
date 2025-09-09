@@ -10,7 +10,7 @@ export const ProductPageSkeleton = () => {
 
   return (
     <div className="min-h-screen py-8">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <ProductDetailSkeleton />
         {/* Related Products Skeleton */}
         <RelatedProductSkeleton />
@@ -21,7 +21,7 @@ export const ProductPageSkeleton = () => {
 
 export const ProductDetailSkeleton = () => {
   return (
-    <div className="flex flex-row gap-x-12">
+    <div className="flex flex-row gap-x-8">
       {/* Product Image Skeleton */}
       <div className="flex min-w-[878px] items-center justify-center">
         <div className="h-[736px] w-full animate-pulse rounded-2xl bg-neutral-100 dark:bg-neutral-900" />

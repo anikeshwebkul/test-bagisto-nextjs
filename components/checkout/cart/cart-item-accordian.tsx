@@ -5,6 +5,7 @@ import Price from "@/components/price";
 
 import type { Cart } from "@/lib/bagisto/types";
 import { DEFAULT_OPTION } from "@/lib/constants";
+import { isObject } from "@/lib/type-guards";
 import { createUrl } from "@/lib/utils";
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { Accordion, AccordionItem } from "@heroui/accordion";
@@ -22,7 +23,7 @@ export default function CartItemAccordion({
 }) {
   return (
     <div className="mobile-heading mx-auto block w-full dark:bg-transparent lg:hidden">
-      <Accordion selectionMode="multiple">
+      <Accordion selectionMode="multiple" className="px-0">
         <AccordionItem
           key="1"
           aria-label="Accordion 1"
@@ -35,7 +36,7 @@ export default function CartItemAccordion({
             />
           }
         >
-          <div className="flex h-full flex-col justify-between overflow-hidden p-1">
+          <div className="flex h-full flex-col justify-between overflow-hidden">
             <ul className="flex-grow overflow-auto py-4">
               {cartItem?.items?.map((item, i) => {
                 const merchandiseSearchParams = {} as MerchandiseSearchParams;
@@ -46,11 +47,6 @@ export default function CartItemAccordion({
                 return (
                   <li key={i} className="flex w-full flex-col">
                     <div className="relative flex w-full flex-row justify-between px-1 py-4">
-                      <div className="absolute z-40 -mt-2 ml-[52px] flex h-5 w-5 items-center justify-center rounded-full bg-primary dark:bg-white/80">
-                        <span className="text-sm font-semibold text-white/60 dark:text-black">
-                          {item.quantity}
-                        </span>
-                      </div>
                       <Link
                         href={merchandiseUrl}
                         className="z-30 flex flex-row items-center space-x-4"
@@ -104,7 +100,7 @@ export default function CartItemAccordion({
                 </p>
                 <Price
                   className="text-right text-base text-black dark:text-white"
-                  amount={cartItem?.taxTotal || "0"}
+                  amount={cartItem?.subTotal || "0"}
                   currencyCode={"USD"}
                 />
               </div>
@@ -112,7 +108,17 @@ export default function CartItemAccordion({
                 <p className="text-black[60%] font-outfit text-base font-normal dark:text-white">
                   Shipping
                 </p>
-                <p className="text-right">Calculated at next step</p>
+                {isObject(cartItem?.selectedShippingRate) ? (
+                  <Price
+                    amount={cartItem?.selectedShippingRate?.price || "0"}
+                    className="text-right text-base text-black dark:text-white"
+                    currencyCode={"USD"}
+                  />
+                ) : (
+                  <p className="text-right text-base">
+                    Calculated at Next Step
+                  </p>
+                )}
               </div>
               <div className="mb-3 flex items-center justify-between pb-1 pt-1">
                 <p className="text-xl font-bold dark:text-white">Total</p>

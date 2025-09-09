@@ -6,9 +6,10 @@ import { CartCheckoutPageSkeleton } from "../place-holder";
 import ShippingMethod from "./shipping-method";
 import { ShippingArrayDataType } from "@/lib/bagisto/types";
 import { fetchHandler } from "@/lib/fetch-handler";
+import { input } from "@heroui/theme";
 
 const Shipping: FC<{
-  selectedShippingRate: {
+  selectedShippingRate?: {
     method: string;
     methodDescription?: string;
   };
@@ -29,7 +30,7 @@ const Shipping: FC<{
     <CartCheckoutPageSkeleton />
   ) : (
     <ShippingMethod
-      selectedShippingRate={selectedShippingRate?.method}
+      selectedShippingRate={selectedShippingRate}
       methodDesc={selectedShippingRate?.methodDescription}
       shippingMethod={
         shippingMethod as unknown as {

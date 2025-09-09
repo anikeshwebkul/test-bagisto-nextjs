@@ -28,7 +28,6 @@ const Email = ({
   const email = userEmail ?? getLocalStorage(EMAIL);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  console.log(typeof email);
 
   const {
     register,
@@ -66,17 +65,23 @@ const Email = ({
         </form>
       ) : (
         // 📌 Show static email view
-        <div className="mt-4 flex justify-between">
-          <div className="flex">
-            <p className="w-[192px] text-base font-normal text-black/60 dark:text-white/60">
+        <div className="items- mt-4 flex flex-col justify-end gap-y-2 sm:flex-row sm:justify-between sm:gap-y-0">
+          <div className="flex justify-between sm:justify-normal">
+            <p className="w-auto text-base font-normal text-black/60 dark:text-white/60 sm:w-[192px]">
               Email Address
             </p>
-            <p className="text-base font-normal">{email}</p>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="block cursor-pointer text-right text-base font-normal text-black/[60%] underline dark:text-neutral-300 sm:hidden"
+            >
+              Change
+            </button>
+            <p className="font-nor mal hidden text-base sm:block">{email}</p>
           </div>
-
+          <p className="font-nor mal block text-base sm:hidden">{email}</p>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="cursor-pointer text-base font-normal text-black/[60%] underline dark:text-neutral-300"
+            className="hidden cursor-pointer text-right text-base font-normal text-black/[60%] underline dark:text-neutral-300 sm:block"
           >
             Change
           </button>

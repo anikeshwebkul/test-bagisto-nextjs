@@ -10,28 +10,14 @@ export const getMenuQuery = /* GraphQL */ `
       getCategoryTree: false
     ) {
       id
-      # categoryId
-      # position
-      # logoPath
       logoUrl
-      # status
-      # displayMode
-      # lft
-      # rgt
-      # parentId
-      # additional
       bannerPath
-      # bannerUrl
       name
       slug
-      # urlPath
       description
       metaTitle
       metaDescription
       metaKeywords
-      # localeId
-      # createdAt
-      # updatedAt
     }
   }
 `;

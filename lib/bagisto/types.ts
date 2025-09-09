@@ -271,6 +271,9 @@ export type Menu = {
   path: string;
   url?: string;
   description?: string;
+  metaTitle?: string; // .metaTitle;
+  metaDescription?: string; // .metaDescription;
+  metaKeywords?: string; // .metaKeywords;
 };
 
 export type Money = {
@@ -298,6 +301,19 @@ export type Page = {
 };
 
 export type Product = Omit<BagistoProductInfo, "variants" | "images"> & {
+  products: ProductDetailsInfo[];
+  paginatorInfo: {
+    count: number;
+    currentPage: number;
+    lastPage: number;
+    total: number;
+  };
+};
+
+export type ProductDetailsInfo = Omit<
+  BagistoProductInfo,
+  "variants" | "images"
+> & {
   variants: ProductVariant[];
   images: ImageInfo[];
 };
@@ -770,11 +786,25 @@ export type BagistoCollectionOperation = {
     input: InputData[];
   };
 };
-
+export interface PaginatedProducts {
+  paginatorInfo: {
+    count: number;
+    currentPage: number;
+    lastPage: number;
+    total: number;
+  };
+  products: ProductDetailsInfo[];
+}
 export type BagistoCollectionProductsOperation = {
   data: {
     allProducts: {
       data: BagistoProductInfo[];
+      paginatorInfo: {
+        count: number;
+        currentPage: number;
+        lastPage: number;
+        total: number;
+      };
     };
   };
   variables: {
@@ -886,6 +916,9 @@ export type BagistoMenuOperation = {
       description: string;
       name: string;
       slug: string;
+      metaTitle: string; // .metaTitle;
+      metaDescription: string; // .metaDescription;
+      metaKeywords: string; // .metaKeywords;
     }[];
   };
   variables: {

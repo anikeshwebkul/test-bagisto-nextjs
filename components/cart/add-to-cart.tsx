@@ -41,9 +41,6 @@ function SubmitButton({
         aria-label="Please select an option"
         className={clsx(buttonClasses, disabledClasses)}
       >
-        <div className="absolute left-0 ml-4">
-          <PlusIcon className="h-5" />
-        </div>
         Add To Cart
       </button>
     );
@@ -113,7 +110,7 @@ export function AddToCart({
 
   const findMatchingObject = (
     searchParamsObject: any,
-    index: ConfigurableProductIndexData[],
+    index: ConfigurableProductIndexData[]
   ) => {
     for (const data of index) {
       let match = true;
@@ -158,7 +155,7 @@ export function AddToCart({
       ? matchingObject
         ? matchingObject?.id
         : ""
-      : variant?.id || defaultVariantId,
+      : variant?.id || defaultVariantId
   );
   const superAttribute = matchingObject?.attributeOptionIds || [];
 

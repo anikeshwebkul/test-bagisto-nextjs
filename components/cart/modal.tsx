@@ -27,6 +27,7 @@ import { DEFAULT_OPTION, NOT_IMAGE } from "@/lib/constants";
 import Price from "@/components/price";
 import LoadingDots from "@/components/loading-dots";
 import { useAppSelector } from "@/store/hooks";
+import { EMAIL, getLocalStorage } from "@/store/local-storage";
 type MerchandiseSearchParams = {
   [key: string]: string;
 };
@@ -124,7 +125,7 @@ export default function CartModal() {
                                   </span>
                                   {item.name !== DEFAULT_OPTION ? (
                                     <p className="text-sm text-black dark:text-neutral-400">
-                                      {item.name}
+                                      {item.sku}
                                     </p>
                                   ) : null}
                                 </div>
@@ -175,7 +176,7 @@ export default function CartModal() {
                           Shipping
                         </p>
                         <p className="text-right text-base font-medium text-black dark:text-white">
-                          Shipping Info
+                          Calculated at Next Step
                         </p>
                       </div>
                       <div className="mb-3 flex items-center justify-between pb-1">
@@ -193,6 +194,7 @@ export default function CartModal() {
                       <CheckoutButton
                         cartDetails={cart?.items}
                         isGuest={cart?.isGuest}
+                        isEmail={cart?.customerEmail ?? getLocalStorage(EMAIL)}
                       />
                     </form>
                   </div>
@@ -210,18 +212,21 @@ export default function CartModal() {
 function CheckoutButton({
   cartDetails,
   isGuest,
+  isEmail,
 }: {
   cartDetails: Array<CartItem>;
   isGuest: boolean;
+  isEmail: string;
 }) {
   const { pending } = useFormStatus();
+  const email = isEmail;
 
   return (
     <>
       <input
         name="url"
         type="hidden"
-        value={isCheckout(cartDetails, isGuest)}
+        value={isCheckout(cartDetails, isGuest, email)}
       />
       <button
         className={clsx(

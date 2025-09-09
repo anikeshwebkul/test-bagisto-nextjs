@@ -21,9 +21,9 @@ const OrderDetail = dynamic(() => import("../cart/order-detail"), {
 });
 const EmptyCartPage = () => {
   return (
-    <div className="sm:mt-42 mx-auto mb-16 mt-12 flex items-center sm:mb-24">
+    <div className="flex min-h-[calc(100vh-450px)] items-center">
       <div className="flex w-full flex-col items-center justify-center overflow-hidden">
-        <CheckSign className="h-48 w-48 sm:h-72 sm:w-72" />
+        <CheckSign className="sm:h-38 sm:w-38 h-28 w-28" />
         <OrderDetail />
         <ClearCartButton buttonName="Continue shopping" redirect="/" />
       </div>

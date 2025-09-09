@@ -25,8 +25,12 @@ export default function MobileFilter({
   return (
     <>
       <div className="flex flex-wrap gap-3">
-        <Button size="md" className="flex capitalize" onPress={() => onOpen()}>
-          <AdjustmentsHorizontalIcon className="h-6 w-8 fill-white stroke-white" />{" "}
+        <Button
+          size="md"
+          className="flex bg-neutral-100 capitalize dark:bg-neutral-800"
+          onPress={() => onOpen()}
+        >
+          <AdjustmentsHorizontalIcon className="h-6 w-8 fill-white stroke-black dark:stroke-white" />{" "}
           <span className="font-outfit text-base tracking-wide">Filter</span>
         </Button>
       </div>

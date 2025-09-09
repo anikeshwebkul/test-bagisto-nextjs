@@ -12,7 +12,7 @@ export const Review: FC<{
   selectedPayment?: selectedPaymentMethodType;
   shippingAddress?: AddressDataTypes;
   billingAddress?: AddressDataTypes;
-  selectedShippingRate: {
+  selectedShippingRate?: {
     method: string;
   };
 }> = ({

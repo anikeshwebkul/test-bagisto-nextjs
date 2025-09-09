@@ -52,10 +52,10 @@ const Subscribe = () => {
   return (
     <form
       noValidate
-      className="mt-4 px-2 md:mt-0 md:px-0"
+      className="mt-4 md:mt-0 md:px-0"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <h1 className="mb-1 text-base font-semibold">Newsletter</h1>
+      <p className="mb-1 text-base font-semibold">Newsletter</p>
       <p className="font-sm font-normal">
         Subscribe to our newsletter for exclusive offers!
       </p>
@@ -71,20 +71,20 @@ const Subscribe = () => {
             },
           })}
           className={clsx(
-            "block w-full rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400",
+            "block rounded-2xl w-full xl:min-w-[283px] p-2.5 text-sm focus:border-blue-200 border border-neutral-200 bg-white  text-black outline-none placeholder:text-neutral-500 focus:ring-1 focus:ring-neutral-300 dark:border-neutral-800 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-400 ",
             errors.email || status?.email
               ? "border-red-500 dark:border-red-500"
-              : "border-gray-300 dark:border-gray-600",
+              : "border-gray-300 dark:border-neutral-200"
           )}
           placeholder="Email Address"
         />
         <Button
           className={clsx(
-            "relative flex  w-full  min-w-32 max-w-32 items-center justify-center rounded-xl border border-solid border-neutral-300 bg-transparent px-2 py-2 font-outfit text-base font-semibold tracking-wide !text-neutral-500  ",
+            "relative flex font-medium w-full min-w-32 max-w-32 items-center justify-center !rounded-2xl border-1 border-solid border-neutral-600 bg-transparent px-5 py-2.5 font-outfit text-[15px]  tracking-wide dark:!text-white !text-neutral-600",
             {
               "hover:opacity-90": !isSubmitting,
               "cursor-not-allowed opacity-50": isSubmitting,
-            },
+            }
           )}
           disabled={loading || isSubmitting}
           loading={loading || isSubmitting}

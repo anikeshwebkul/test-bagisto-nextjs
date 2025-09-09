@@ -146,7 +146,6 @@ export const useCheckout = () => {
       }
     },
     onError: (error) => {
-      console.log(error);
       showToast(error?.message as string, "danger");
     },
   });

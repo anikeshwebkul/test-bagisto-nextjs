@@ -22,7 +22,7 @@ export function useCartDetail() {
 
   // ✅ Sync query result to Redux
   useEffect(() => {
-    if (data?.cartDetail && isObject(data.cartDetail)) {
+    if (data?.cartDetail && isObject(data.cartDetail) && !isLoading) {
       dispatch(addItem(data.cartDetail));
     }
   }, [data, dispatch]); // Proper dependencies

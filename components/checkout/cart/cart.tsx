@@ -56,7 +56,7 @@ export default function Cart({ cart }: { cart: any }) {
                         </h1>
                         {item.name !== DEFAULT_OPTION ? (
                           <p className="text-sm font-normal text-neutral-500 dark:text-neutral-400">
-                            {item.name}
+                            {item.sku}
                           </p>
                         ) : null}
                         <span className="font-normal text-black dark:text-white">
@@ -111,7 +111,7 @@ export default function Cart({ cart }: { cart: any }) {
                 currencyCode={"USD"}
               />
             ) : (
-              <p className="text-right text-base">Shipping Info</p>
+              <p className="text-right text-base">Calculated at Next Step</p>
             )}
           </div>
           <div className="my-6 flex items-center justify-between">

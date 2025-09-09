@@ -1,11 +1,8 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-
 import { ProductMoreDetails } from "./producr-more-detail";
 import { VariantSelector } from "./variant-selector";
-
 import Rating from ".";
-
 import { AddToCart } from "@/components/cart/add-to-cart";
 import Price from "@/components/price";
 import Prose from "@/components/prose";
@@ -32,7 +29,7 @@ export async function ProductDescription({
     <>
       <div className="mb-6 flex flex-col border-b border-neutral-200 pb-6 dark:border-neutral-700">
         <h1 className="font-outfit text-4xl font-semibold">{data?.name}</h1>
-        <div className="flex w-auto justify-between px-1 py-6">
+        <div className="flex w-auto flex-col justify-between gap-y-2 py-4 xs:flex-row xs:gap-y-0 sm:py-6">
           <Price
             amount={
               data?.priceHtml?.finalPrice ||
@@ -42,11 +39,14 @@ export async function ProductDescription({
             className="font-outfit text-2xl font-semibold"
             currencyCode={data?.priceHtml?.currencyCode || ""}
           />
-          <Rating
-            length={5}
-            reviewCount={moreDetails?.averageRating}
-            star={moreDetails?.averageRating}
-          />
+          {moreDetails?.reviews?.length > 0 ? (
+            <Rating
+              length={5}
+              reviewCount={moreDetails?.averageRating}
+              star={moreDetails?.averageRating}
+              totalReview={moreDetails?.reviews?.length}
+            />
+          ) : null}
         </div>
       </div>
       <Suspense fallback={<p>Loading...</p>}>

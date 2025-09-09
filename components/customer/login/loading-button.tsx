@@ -41,8 +41,8 @@ export function Button({
       <div className="mx-2 flex items-center justify-center gap-2">
         {loading ? (
           <>
-            <span>Loading</span>
             <LoadingDots className="bg-white" />
+            <span>loading</span>
           </>
         ) : (
           <span>{title}</span>

@@ -8,15 +8,11 @@ import FilterListSkeleton, {
   SortOrderSkeleton,
 } from "@/components/layout/search/filter/filter-skeleton";
 import NotFound from "@/components/layout/search/not-found";
-import Prose from "@/components/prose";
-import {
-  getCollection,
-  getFilterAttributes,
-  getMenu,
-  getProducts,
-} from "@/lib/bagisto";
-import { isObject } from "@/lib/type-guards";
+import { getFilterAttributes, getMenu, getProducts } from "@/lib/bagisto";
+import { isArray, isObject } from "@/lib/type-guards";
 import MobileFilter from "@/components/layout/search/filter/modile-filter";
+import CategoryDetail from "@/components/layout/search/category-detail.tsx";
+import Pagination from "@/components/elements/pagination";
 const ProductGridItems = dynamic(
   () => import("@/components/layout/product-grid-items"),
   {
@@ -43,19 +39,15 @@ export async function generateMetadata({
   const categoryItem = collections.find(
     (item) => item.path == `/search/${categorySlug}`
   );
-  const categoryId = categoryItem?.id;
-  const collection = await getCollection(categoryId || "");
 
-  if (!collection) return notFound();
-
-  const firstP = collection[0];
+  if (!isObject(categoryItem)) return notFound();
 
   return {
-    title: firstP?.metaTitle || firstP?.name,
+    title: categoryItem?.metaTitle || categoryItem?.title,
     description:
-      firstP?.metaDescription ||
-      firstP?.description ||
-      `${firstP?.name} products`,
+      categoryItem?.metaDescription ||
+      categoryItem?.description ||
+      `${categoryItem?.title} products`,
   };
 }
 
@@ -82,7 +74,7 @@ export default async function CategoryPage({
     value,
   }));
 
-  const products = await getProducts({
+  const data = await getProducts({
     categoryId,
     sortKey,
     filters,
@@ -94,16 +86,19 @@ export default async function CategoryPage({
   });
   const sortOrders = productAttributes?.sortOrders;
   const filterAttributes = productAttributes?.filterAttributes;
+  const products = data?.products;
+  const paginatorInfo = data?.paginatorInfo;
+  const { total, currentPage } = paginatorInfo;
 
   return (
     <section>
-      {isObject(categoryItem) && categoryItem?.description && (
-        <Prose
-          className="mx-auto mt-7.5 w-full max-w-screen-2xl"
-          html={categoryItem?.description}
+      <Suspense fallback={<FilterListSkeleton />}>
+        <CategoryDetail
+          categoryItem={{ description: categoryItem?.description ?? "" }}
         />
-      )}
-      <div className="my-10 hidden flex-1 grid-cols-[repeat(auto-fit,minmax(180px,1fr))] items-center gap-4 md:grid xl:grid-cols-[repeat(auto-fit,minmax(180px,192px))]">
+      </Suspense>
+
+      <div className="my-10 hidden gap-4 md:flex md:items-baseline md:justify-between">
         <Suspense fallback={<FilterListSkeleton />}>
           <FilterList filterAttributes={filterAttributes} />
         </Suspense>
@@ -128,6 +123,23 @@ export default async function CategoryPage({
           <ProductGridItems products={products} />
         </Grid>
       )}
+
+      {isArray(products) ? (
+        <>
+          {total > 12 ? (
+            <nav
+              aria-label="Collection pagination"
+              className="mt-10 block items-center sm:flex"
+            >
+              <Pagination
+                itemsPerPage={12}
+                itemsTotal={total}
+                currentPage={currentPage ? currentPage - 1 : 0}
+              />
+            </nav>
+          ) : null}
+        </>
+      ) : null}
     </section>
   );
 }

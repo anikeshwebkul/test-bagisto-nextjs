@@ -2,9 +2,7 @@
 
 import { FieldValues, useForm, Controller } from "react-hook-form";
 import { cn, Radio, RadioGroup } from "@heroui/react";
-
 import { ProceedToCheckout } from "../cart/proceed-to-checkout";
-
 import { useCheckout } from "@/components/hooks/use-checkout";
 import { isArray } from "@/lib/type-guards";
 import { ShippingArrayDataType } from "@/lib/bagisto/types";
@@ -23,7 +21,9 @@ export default function ShippingMethod({
   methodDesc,
 }: {
   shippingMethod?: { shippingMethods: ShippingArrayDataType[] };
-  selectedShippingRate: string;
+  selectedShippingRate?: {
+    method: string;
+  };
   methodDesc?: string;
 }) {
   const { isSaving, saveCheckoutShipping } = useCheckout();
@@ -43,20 +43,18 @@ export default function ShippingMethod({
     // ✅ this will now correctly send { method: "flat_rate_flat_rate" } etc.
     if (!data?.method) {
       showToast("Plese Choose the Shipping Method", "warning");
-
       return;
     }
-    // setIsOpen(!isOpen);
     saveCheckoutShipping(data);
   };
 
   return (
     <div>
-      {selectedShippingRate !== "" ? (
+      {selectedShippingRate !== undefined ? (
         isOpen ? (
-          <div className="mt-4 flex justify-between">
+          <div className="mt-4 flex flex-col justify-between sm:flex-row">
             <div className="flex">
-              <p className="w-[192px] text-base font-normal text-black/60 dark:text-white/60">
+              <p className="w-auto text-base font-normal text-black/60 dark:text-white/60 sm:w-[192px]">
                 Shipping Method
               </p>
               <p className="text-base font-normal">{methodDesc}</p>
@@ -80,13 +78,17 @@ export default function ShippingMethod({
                     <RadioGroup
                       {...field}
                       label=""
-                      value={field.value} // controlled value
+                      value={
+                        typeof field.value === "object" && field.value !== null
+                          ? field.value.method
+                          : (field.value ?? "")
+                      }
                       onValueChange={field.onChange} // update form
                     >
                       {getShippingMethods.map((method: any) => (
                         <CustomRadio
                           key={method?.methods?.code}
-                          className="my-1 border border-solid border-neutral-300 dark:border-neutral-500"
+                          className="inset-0 my-1 border border-solid border-neutral-300 dark:border-neutral-500"
                           description={method?.methods?.formattedBasePrice}
                           value={method?.methods?.code}
                         >
@@ -117,13 +119,17 @@ export default function ShippingMethod({
                   <RadioGroup
                     {...field}
                     label=""
-                    value={field.value} // controlled value
+                    value={
+                      typeof field.value === "object" && field.value !== null
+                        ? field.value.method
+                        : (field.value ?? "")
+                    } // controlled value
                     onValueChange={field.onChange} // update form
                   >
                     {getShippingMethods.map((method: any) => (
                       <CustomRadio
                         key={method?.methods?.code}
-                        className="my-1 border border-solid border-neutral-300 dark:border-neutral-500"
+                        className="inset-0 my-1 border border-solid border-neutral-300 dark:border-neutral-500"
                         description={method?.methods?.formattedBasePrice}
                         value={method?.methods?.code}
                       >
@@ -156,9 +162,10 @@ const CustomRadio = (props: CustomRadioProps) => {
       classNames={{
         base: cn(
           "inline-flex m-0 bg-transparent hover:bg-transparent items-center",
-          "flex-row max-w-full cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
+          "flex-row items-baseline max-w-full cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
           "data-[selected=true]:border-primary"
         ),
+        hiddenInput: "peer absolute h-0 w-0 opacity-0",
       }}
     >
       {children}

@@ -7,78 +7,149 @@ import InputText from "../cart/input";
 import { ProceedToCheckout } from "../cart/proceed-to-checkout";
 import SelectBox from "../select-filed";
 
-import { CountryArrayDataType } from "@/lib/bagisto/types";
+import { BagistoCart, CountryArrayDataType } from "@/lib/bagisto/types";
 import RegionDropDown from "@/components/checkout/region-drop-down";
+import { FieldValues, useForm } from "react-hook-form";
+import CheckBox from "@/components/elements/checkbox";
+import { EMAIL, getLocalStorage } from "@/store/local-storage";
+import { useCustomToast } from "@/components/hooks/use-toast";
+import { addItem } from "@/store/slices/cart-slice";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 
 const AddAdressForm: FC<{
   countries: CountryArrayDataType[] | null;
-}> = ({ countries }) => {
-  const [isSelected, setIsSelected] = useState(true);
+  userEmail?: string;
+}> = ({ countries, userEmail }) => {
+  const email = getLocalStorage(EMAIL) ?? userEmail;
+  const { showToast } = useCustomToast();
+  const dispatch = useDispatch();
+  const router = useRouter();
 
-  const [state, formAction] = useActionState(createCheckoutAddress, null);
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: email,
+      firstName: "",
+      lastName: "",
+      country: "IN",
+      state: "UP",
+      address: "",
+      companyName: "",
+      city: "",
+      postcode: "",
+      phone: "",
+      saveAddress: true,
+    },
+  });
+
+  const watchShowAge = watch("saveAddress", true);
+  const formAction = async (data: FieldValues) => {
+    await createCheckoutAddress({ ...data })
+      .then((res) => {
+        if (res?.succsess) {
+          showToast("Add Address Successfully", "success");
+          dispatch(addItem(res?.data as BagistoCart));
+          router.replace("/checkout?step=shipping");
+        }
+      })
+      .catch((error) => {
+        showToast(error, "danger");
+      });
+  };
 
   return (
     <>
-      <form action={formAction} className="my-5">
+      <form onSubmit={handleSubmit(formAction)} className="my-5">
         <div className="my-7 grid grid-cols-6 gap-4">
           <InputText
             className="col-span-3"
-            name="firstName"
-            // errorMsg={state?.errors?.firstName}
+            {...register("firstName", {
+              required: "First name is required",
+            })}
+            errorMsg={errors?.firstName?.message}
             label="First Name *"
+            size="md"
           />
           <InputText
             className="col-span-3"
-            name="lastName"
-            // errorMsg={state?.errors?.lastName}
+            {...register("lastName", {
+              required: "Last name is required",
+            })}
+            errorMsg={errors?.lastName?.message}
             label="Last Name *"
+            size="md"
           />
           <InputText
             className="col-span-6"
             label="Company Name"
-            name="companyName"
+            {...register("companyName")}
+            size="md"
           />
           <InputText
             className="col-span-6"
-            name="address"
+            {...register("address", {
+              required: "Street Address is required",
+            })}
+            errorMsg={errors?.address?.message}
             label="Street Address *"
-            // errorMsg={state?.errors?.address}
+            size="md"
           />
 
-          <SelectBox
+          {/* <SelectBox
             className="col-span-3"
             countries={countries}
             nameAttr="country"
             defaultValue={"AI"}
             // errorMsg={state?.errors?.country}
             label="Country/Region *"
-          />
-          <RegionDropDown
+          /> */}
+          {/* <RegionDropDown
             className="col-span-3 sm:col-span-3"
             label="State *"
             countries={countries}
             // errorMsg={state?.errors?.state}
             name="state"
-          />
-          <InputText className="col-span-3" label="City *" name="city" />
+          /> */}
           <InputText
-            className="col-span-3"
-            label="Zip Code *"
-            name="postcode"
+            {...register("city", {
+              required: "City field is required",
+            })}
+            className="col-span-3 mb-4"
+            errorMsg={errors?.city?.message}
+            label="City *"
+            size="md"
           />
-          <InputText className="col-span-6" label="Phone *" name="phone" />
-          <Checkbox
+          <InputText
+            {...register("postcode", {
+              required: "Postcode field is required",
+            })}
+            className="col-span-3"
+            errorMsg={errors?.postcode?.message}
+            label="Zip Code *"
+            size="md"
+          />
+          <InputText
+            {...register("phone", {
+              required: "Phone field is required",
+            })}
             className="col-span-6"
-            color="primary"
-            isSelected={isSelected}
-            name="saveAddress"
-            value={isSelected ? "1" : "0"}
-            onValueChange={setIsSelected}
-          >
-            <span className="text-neutral-400 dark:text-white">
-              Save this to address book
-            </span>
-          </Checkbox>
+            errorMsg={errors?.phone?.message}
+            label="Phone *"
+            size="md"
+          />
+          <CheckBox
+            className="col-span-6 mt-3"
+            defaultValue={watchShowAge}
+            id="saveAddress"
+            label="Save this to address book"
+            {...register("saveAddress")}
+          />
         </div>
 
         <div className="justify-self-end">
