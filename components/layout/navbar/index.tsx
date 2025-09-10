@@ -11,6 +11,7 @@ import OpenCart from "@/components/cart/open-cart";
 import UserAccount from "@/components/customer";
 import LogoIcon from "@/components/icons/logo";
 import { getMenu } from "@/lib/bagisto";
+import CameraComponent from "@/components/CameraComponent";
 import MobileSearch from "./mobile-search";
 import dynamic from "next/dynamic";
 
@@ -31,6 +32,7 @@ export default async function Navbar() {
               href="/"
             >
               <LogoIcon />
+              <CameraComponent />
             </Link>
             {menu.length ? (
               <ul className="hidden gap-4 text-sm md:items-center lg:flex xl:gap-6">
