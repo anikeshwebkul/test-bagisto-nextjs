@@ -1,17 +1,17 @@
 #  Bagisto Next.js Commerce
 
 A **headless eCommerce framework** built with **Next.js** and powered by **Bagisto**, designed for modern scalability and flexibility.
-Through layered caching and optimized rendering strategies, it consistently achieves a **100/100 Core Web Vitals score**, delivering lightning-fast performance and seamless shopping experiences.  
+Through layered caching and optimized rendering strategies, it consistently achieves a **100/100 Core Web Vitals score**, delivering lightning-fast performance and seamless shopping experiences.  tst
 
 ## Features
 
-- **Ultra-fast storefront** with 100/100 Core Web Vitals score.  
-- **Layered caching** for API responses and page rendering.  
-- Fully **responsive and mobile-friendly** design.  
-- SEO optimized with meta tags, OpenGraph, and Twitter cards.  
-- Secure authentication via **NextAuth.js**.  
-- Powered by **Bagisto** GraphQL APIs for robust commerce functionality.  
-- **Incremental Static Regeneration (ISR)** with revalidation.  
+- **Ultra-fast storefront** with 100/100 Core Web Vitals score.
+- **Layered caching** for API responses and page rendering.
+- Fully **responsive and mobile-friendly** design.
+- SEO optimized with meta tags, OpenGraph, and Twitter cards.
+- Secure authentication via **NextAuth.js**.
+- Powered by **Bagisto** GraphQL APIs for robust commerce functionality.
+- **Incremental Static Regeneration (ISR)** with revalidation.
 
 ---
 
@@ -27,7 +27,7 @@ Before you begin, ensure you have the following installed:
 ## Installation
 
 1) Install Bagisto
- 
+
     Begin by [installing the Bagisto](https://devdocs.bagisto.com/) eCommerce platform on your server or local environment.
 
 2) Install the Bagisto Headless Extension
@@ -48,10 +48,10 @@ Before you begin, ensure you have the following installed:
 | `NEXTAUTH_SECRET` | Random secret for NextAuth | Generate with `openssl rand -base64 32` |
 
 
-**Important Notes**  
-- You will need to use the environment variables defined in `.env.example` to run Next.js Commerce.  
-- It’s recommended to use **Vercel Environment Variables**, but a `.env` file is sufficient for local development.  
-- **Never commit your `.env` file** to version control — it contains secrets that would allow others to control your Bagisto store.  
+**Important Notes**
+- You will need to use the environment variables defined in `.env.example` to run Next.js Commerce.
+- It’s recommended to use **Vercel Environment Variables**, but a `.env` file is sufficient for local development.
+- **Never commit your `.env` file** to version control — it contains secrets that would allow others to control your Bagisto store.
 
 ---
 
